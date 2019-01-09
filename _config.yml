@@ -1,1 +1,46 @@
-theme: jekyll-theme-minimal
+# Basic
+title: Zijun Hui
+subtitle: Doing what I like
+welcome_message: Welcome to my world
+description: Random thoughts and random solutions for computer science
+creator: <a href="https://github.com/ZijunH/">@ZijunH</a>
+
+url: "zijunh.github.io"
+
+permalink: /:year/:month/:title/
+
+# Format
+highlighter: rouge
+
+# supported colors: blue, green, purple, red, orange or slate. If you need clear, leave it empty.
+cover_color: red
+
+# The blog button should not be removed.
+blog_button:
+    title: Blog
+    description: Visit blog
+
+# Navigation buttons in the front page.
+nav:
+    # - {title: Projects, description: My Projects, url: 'http://project.onevcat.com'}
+    # - {title: Another Button, description: A button, url: 'http://example.com'}
+
+# Pagination
+plugins: [jekyll-paginate]
+paginate: 10
+paginate_path: "page/:num/"
+
+# Comment
+comment:
+    disqus: zijunh
+    # duoshuo: 
+    
+# Social
+social:
+    github: ZijunH
+    mail: allenhui1220@outlook.com
+
+# Google Analytics
+ga:
+    # id: your_ga_id
+    # host: your_host
