@@ -52,4 +52,4 @@ P.S.: Apparently there exists a 14 byte and a **9** byte solution. If anyone can
 
 ## Read more
 
-[How “leaking pointers” to bypass DEP/ASLR works](https://security.stackexchange.com/questions/22989/how-leaking-pointers-to-bypass-dep-aslr-works)
+[How "leaking pointers" to bypass DEP/ASLR works](https://security.stackexchange.com/questions/22989/how-leaking-pointers-to-bypass-dep-aslr-works)
