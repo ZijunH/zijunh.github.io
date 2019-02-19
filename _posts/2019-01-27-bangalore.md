@@ -9,7 +9,7 @@ keywords: [microcorruption, bangalore, solution, tip, answer, ctf, wargames, 136
 
 ## The input
 
-For this particular problem, the user can enters one string, `password`, with a maximum length of 0x30 bytes.
+For this particular problem, the user can enter one string, `password`, with a maximum length of 0x30 bytes.
 
 ## The exploit
 
