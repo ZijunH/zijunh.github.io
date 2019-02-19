@@ -29,7 +29,7 @@ The start of the argument pointer is 2 bytes away from the input string, so a re
 
 The final solution should have the following format:
 
-<--two bytes of address-->%x%n
+<--2 byte address-->%x%n
 
 In my case, it is <>%x%n.
 

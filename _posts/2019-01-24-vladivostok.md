@@ -29,11 +29,15 @@ Examination of the code reveals `INT` is 0x180 bytes after the start of `printf`
 
 `username` should print a string with the following format:
 
-<--2 bytes of 0--><--address of `printf`-->
+<--2 bytes of 0-->  
+<--2 byte address of `printf`-->
 
 `password` has the following format:
 
-<--8 bytes of padding--><--`printf` address + 0x180--><--2 bytes of padding--><--7f-->
+<--8 byte padding-->  
+<--2 byte `printf` address + 0x180-->  
+<--2 byte padding-->  
+<--7f-->
 
 `username`:
 
