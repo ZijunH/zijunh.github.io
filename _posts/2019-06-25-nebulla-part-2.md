@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Exploit Education - Nebula: Write-up (Part 21)"
+title: "Exploit Education - Nebula: Write-up (Part 1)"
 date: 2019-06-25 21:44:38.000000000 +8:00
 excerpt: Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.
 tags: [exploit education, solution, nebula]
