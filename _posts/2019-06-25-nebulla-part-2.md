@@ -324,3 +324,13 @@ Now, compiling and executing the executable spawns a shell. Its priveledges are 
 
 Don't forget to clean up by `rm /var/tmp/flag15/*` to revert the machine to the previous state.
 
+## Level16
+
+This is a rather simple level. Looking at the source code it can be easily spotted that there is an exploit in the line `egrep "^$username" /home/flag16/userdb.txt 2>&1`, as we basically have control over `$username`. `$username` is first preprocessed by converting all characters to uppercase and stripping all characters after a 0. However, both are only minor conviniences. I planned to set `$username` to a custom bash file that executes `getflag` and stores the output in a file. I was able to utilise the bash wildcard, the astrick, to specify the pathing, as long as the name of the bash file is correct. At the end, I ended up with the following code, stored in a file named "AAA" in the "/tmp" directory:
+
+```bash
+getflag > /tmp/output
+```
+
+`chmod` the script to allow execution. With that file, I was able to call the perl script with the username "\`/\*/AAA\`". As you can see, there are no spaces or lower case letters in the string, thus it will not be transformed. The backticks are required to allow execution of the inline bash before `egrep`. The string is converted to hexadecimal for URL purposes, resulting in "%60%2F%2A%2FAAA%60". The perl script is executed by `wget -O - "http://127.0.0.1:1616/index.cgi?username=%60%2F%2A%2FAAA%60"`. After this, inspect the file "/tmp/output", which should have the string "You have successfully executed getflag on a target account", indicating success.
+
