@@ -3,10 +3,10 @@
   <channel>
     <title>Zijun Hui</title>
     <description>Random thoughts and random solutions on computer science</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 09 Dec 2019 21:47:44 +1100</pubDate>
-    <lastBuildDate>Mon, 09 Dec 2019 21:47:44 +1100</lastBuildDate>
+    <link>zijunh.github.io/</link>
+    <atom:link href="zijunh.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 09 Dec 2019 21:58:16 +1100</pubDate>
+    <lastBuildDate>Mon, 09 Dec 2019 21:58:16 +1100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -16,8 +16,8 @@
 &lt;p&gt;Though now I may seem crazy to believe reseting 200MB of RAM takes insignificant time, it is what I thought at that time. Software engineering classes taught me to initialise your variables, even if they will be overwritten soon. Though most copmpetitive programming guides recommend using &lt;code class=&quot;highlighter-rouge&quot;&gt;memset&lt;/code&gt; to clear arrays, I guess you really need to consider which arrays are necessary to clear. For those used for DP, clearly they are not required.&lt;/p&gt;
 </description>
         <pubDate>Tue, 20 Aug 2019 23:50:12 +1000</pubDate>
-        <link>http://localhost:4000/2019/08/tle/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/08/tle/</guid>
+        <link>zijunh.github.io/2019/08/tle/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/08/tle/</guid>
         
         <category>competitive programming</category>
         
@@ -355,10 +355,11 @@ exit_group(11)                          = ?
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;chmod&lt;/code&gt; the script to allow execution. With that file, I was able to call the perl script with the username “`/*/AAA`”. As you can see, there are no spaces or lower case letters in the string, thus it will not be transformed. The backticks are required to allow execution of the inline bash before &lt;code class=&quot;highlighter-rouge&quot;&gt;egrep&lt;/code&gt;. The string is converted to hexadecimal for URL purposes, resulting in “%60%2F%2A%2FAAA%60”. The perl script is executed by &lt;code class=&quot;highlighter-rouge&quot;&gt;wget -O - &quot;http://127.0.0.1:1616/index.cgi?username=%60%2F%2A%2FAAA%60&quot;&lt;/code&gt;. After this, inspect the file “/tmp/output”, which should have the string “You have successfully executed getflag on a target account”, indicating success.&lt;/p&gt;
 
 &lt;h2 id=&quot;level17&quot;&gt;Level17&lt;/h2&gt;
+
 </description>
         <pubDate>Tue, 25 Jun 2019 23:44:38 +1000</pubDate>
-        <link>http://localhost:4000/2019/06/nebulla-part-2/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/06/nebulla-part-2/</guid>
+        <link>zijunh.github.io/2019/06/nebulla-part-2/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/06/nebulla-part-2/</guid>
         
         <category>exploit education</category>
         
@@ -701,8 +702,8 @@ wwwbugs login:
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
         <pubDate>Sun, 07 Apr 2019 22:40:32 +1000</pubDate>
-        <link>http://localhost:4000/2019/04/nebula/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/04/nebula/</guid>
+        <link>zijunh.github.io/2019/04/nebula/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/04/nebula/</guid>
         
         <category>exploit education</category>
         
@@ -993,8 +994,8 @@ b012 1000      call	#0x10
 &lt;p&gt;&lt;a href=&quot;http://www.ti.com/lit/ug/slau144j/slau144j.pdf&quot;&gt;MSP430 instruction guide&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Mon, 25 Feb 2019 21:22:19 +1100</pubDate>
-        <link>http://localhost:4000/2019/02/hollywood/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/02/hollywood/</guid>
+        <link>zijunh.github.io/2019/02/hollywood/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/02/hollywood/</guid>
         
         <category>microcorruption</category>
         
@@ -1307,8 +1308,8 @@ aaaaaaaaaaaaaaaaec4caaaa7f
 
 </description>
         <pubDate>Fri, 22 Feb 2019 00:52:34 +1100</pubDate>
-        <link>http://localhost:4000/2019/02/chernobyl/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/02/chernobyl/</guid>
+        <link>zijunh.github.io/2019/02/chernobyl/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/02/chernobyl/</guid>
         
         <category>microcorruption</category>
         
@@ -1362,8 +1363,8 @@ call	#0x10
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
         <pubDate>Tue, 19 Feb 2019 13:52:34 +1100</pubDate>
-        <link>http://localhost:4000/2019/02/lagos/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/02/lagos/</guid>
+        <link>zijunh.github.io/2019/02/lagos/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/02/lagos/</guid>
         
         <category>microcorruption</category>
         
@@ -1430,8 +1431,8 @@ call	#0x10
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
         <pubDate>Sun, 27 Jan 2019 14:47:11 +1100</pubDate>
-        <link>http://localhost:4000/2019/01/bangalore/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/bangalore/</guid>
+        <link>zijunh.github.io/2019/01/bangalore/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/01/bangalore/</guid>
         
         <category>microcorruption</category>
         
@@ -1495,8 +1496,8 @@ call	#0x10
 &lt;p&gt;&lt;a href=&quot;https://security.stackexchange.com/questions/22989/how-leaking-pointers-to-bypass-dep-aslr-works&quot;&gt;How “leaking pointers” to bypass DEP/ASLR works&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Thu, 24 Jan 2019 14:16:29 +1100</pubDate>
-        <link>http://localhost:4000/2019/01/vladivostok/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/vladivostok/</guid>
+        <link>zijunh.github.io/2019/01/vladivostok/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/01/vladivostok/</guid>
         
         <category>microcorruption</category>
         
@@ -1576,8 +1577,8 @@ if (!r14.IN_USE){
 &lt;p&gt;8 bytes of padding is required, because when &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; is used, a 4 byte instruction will appear.&lt;/p&gt;
 </description>
         <pubDate>Wed, 23 Jan 2019 15:37:10 +1100</pubDate>
-        <link>http://localhost:4000/2019/01/algiers/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/algiers/</guid>
+        <link>zijunh.github.io/2019/01/algiers/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/01/algiers/</guid>
         
         <category>microcorruption</category>
         
@@ -1654,8 +1655,8 @@ if (!r14.IN_USE){
 
 </description>
         <pubDate>Fri, 11 Jan 2019 14:33:12 +1100</pubDate>
-        <link>http://localhost:4000/2019/01/novosibirsk/</link>
-        <guid isPermaLink="true">http://localhost:4000/2019/01/novosibirsk/</guid>
+        <link>zijunh.github.io/2019/01/novosibirsk/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/01/novosibirsk/</guid>
         
         <category>microcorruption</category>
         
