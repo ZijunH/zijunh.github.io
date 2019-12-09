@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Microcorruption - Vladivostok: Write-up</title>
+  <meta name="description" content="A write-up on the solution for the microcorruption level Vladivostok. The thought process behind the solution is also included. At the end a 17 byte solution...">
+  <meta name="author" content="Zijun Hui">
+  <meta name="keywords" content="microcorruption, algiers, solution, tip, answer, ctf, wargames, 101670, clock cycle, 17, input">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Microcorruption - Vladivostok: Write-up">
+  <meta name="twitter:description" content="A write-up on the solution for the microcorruption level Vladivostok. The thought process behind the solution is also included. At the end a 17 byte solution...">
+  <meta name="twitter:keywords" content="microcorruption, algiers, solution, tip, answer, ctf, wargames, 101670, clock cycle, 17, input">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Microcorruption - Vladivostok: Write-up">
+  <meta property="og:description" content="A write-up on the solution for the microcorruption level Vladivostok. The thought process behind the solution is also included. At the end a 17 byte solution...">
+  <meta name="og:keywords" content="microcorruption, algiers, solution, tip, answer, ctf, wargames, 101670, clock cycle, 17, input">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
+  <link rel="canonical" href="zijunh.github.io/2019/01/vladivostok/">
+  <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="zijunh.github.io/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+  
+</head>
+
+
+  <body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+    
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="Go to Zijun Hui's page" class="blog-button"><img src="/assets/images/avatar.jpg" width="80" alt="Zijun Hui logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="Link to homepage for Zijun Hui" class="blog-button">Zijun Hui</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">Doing what I like</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">Random thoughts and random solutions on computer science</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        <p class="panel-cover__description">Welcome to my world</p>
+        
+        
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="Visit blog" class="blog-button">Home</a></li>
+                
+                  <li class="navigation__item"><a href="/categories.html#blog" title="Categoies">Categories</a></li>
+                
+                
+              </ul>
+            </nav>
+          </div>
+          
+          <div><nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  
+
+  
+  <!-- Github -->
+  <li class="navigation__item">
+    <a href="https://github.com/ZijunH" title="@ZijunH 的 Github" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+  
+  
+  
+
+  
+
+  <!-- RSS -->
+  <li class="navigation__item">
+    <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+  
+  <!-- Email -->
+  <li class="navigation__item">
+    <a href="mailto:allenhui1220@outlook.com" title="Contact me">
+      <i class='social fa fa-envelope'></i>
+      <span class="label">Email</span>
+    </a>
+  </li>
+  
+
+  </ul>
+</nav>
+</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-red"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2019-01-24 14:16:29 +1100" itemprop="datePublished" class="post-meta__date date">2019-01-24</time> &#8226; <span class="post-meta__tags tags">microcorruption, solution, wargames</span>
+    </div>
+    <h1 class="post-title">Microcorruption - Vladivostok: Write-up</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="the-input">The input</h2>
+
+<p>For this particular problem, the user can only input two string in the form of <code class="highlighter-rouge">username</code> and <code class="highlighter-rouge">password</code>. The maximum accepted length for <code class="highlighter-rouge">username</code> is 0x8 bytes, and the maximum accepted length is <code class="highlighter-rouge">password</code> is 0x14 bytes .</p>
+
+<h2 id="the-exploit">The exploit</h2>
+
+<p>Again, we are able to look at the function names and notice there is a function containing <code class="highlighter-rouge">aslr</code>. Though it looks complicated, we are going to ignore how the function works on a microscopic level, and use our knowledge of ASLR to solve the problem. ASLR stands for address space layout randomisation. It involves placing the libraries, stack, and heap (doesn’t exist in this case) at random locations within memory. It serves to protect program when the exploiter controls a return pointer. As the locations are randomised, she/he will not know where the desired code fragment is stored.</p>
+
+<p>However, this technique is easily countered by knowing the location of one function in memory. This way, the location of the desired code fragment can be calulated by adding the offset to the exposed location, and the offset is easily determined by looking at the machine code.</p>
+
+<p>In this example, this is fortunately the case. A <code class="highlighter-rouge">printf</code> function exists, which can be exploited using <code class="highlighter-rouge">%x</code> to reveal the content on the stack. Trying with an input of <code class="highlighter-rouge">%x%x%x%x</code> provides an output of <code class="highlighter-rouge">0000xxxx00000000</code>, where <code class="highlighter-rouge">xxxx</code> is random, hinting this may be a pointer to another function. Pausing the program execution and comparing the assembly code with the initial state of the program, we can identify it as the start of the <code class="highlighter-rouge">printf</code> function.</p>
+
+<p>Controlling the return pointer is easy through a buffer overflow of the input string. A small trial-and-error reveals the return pointer of the function is stored 8 bytes after the start of the input.</p>
+
+<p>As <code class="highlighter-rouge">printf</code> function location can be exposed in the program, we have to consider what shell code we want to inject. As the location of the stack is randomised separately, it is difficult to determine the stack loction, thus prevents use from including custom code in the input. What we do have access to, however, is the content of the stack. Therefore, we are should be able to push 0x7f, the door opening code, onto the stack and call <code class="highlighter-rouge">INT</code>, which opens the door.</p>
+
+<p>Examination of the code reveals <code class="highlighter-rouge">INT</code> is 0x180 bytes after the start of <code class="highlighter-rouge">printf</code>. Pushing 0x7f is done by appending 2 bytes of padding and <code class="highlighter-rouge">7f</code> at the end of the input string.</p>
+
+<h2 id="the-solution">The solution</h2>
+
+<p><code class="highlighter-rouge">username</code> should print a string with the following format:</p>
+
+<p>&lt;–2 bytes of 0–&gt;<br />
+&lt;–2 byte address of <code class="highlighter-rouge">printf</code>–&gt;</p>
+
+<p><code class="highlighter-rouge">password</code> has the following format:</p>
+
+<p>&lt;–8 byte padding–&gt;<br />
+&lt;–2 byte <code class="highlighter-rouge">printf</code> address + 0x180–&gt;<br />
+&lt;–2 byte padding–&gt;<br />
+&lt;–7f–&gt;</p>
+
+<p><code class="highlighter-rouge">username</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%x%x
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">password</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1122334455667788c2ad11227f
+</code></pre></div></div>
+
+<p>P.S.: Apparently there exists a 14 byte and a <strong>9</strong> byte solution. If anyone can explain how please tell me.</p>
+
+<h2 id="read-more">Read more</h2>
+
+<p><a href="https://security.stackexchange.com/questions/22989/how-leaking-pointers-to-bypass-dep-aslr-works">How “leaking pointers” to bypass DEP/ASLR works</a></p>
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Recent posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/01/bangalore/" title="link to Microcorruption - Bangalore: Write-up">Microcorruption - Bangalore: Write-up</a></h2>
+       <p class="excerpt">A write-up on the solution for the microcorruption level Bangalore. The thought process behind the solution is also included. At the end a 24 byte solution with 13676 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-01-27 14:47:11 +1100" class="post-list__meta--date date">2019-01-27</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/01/bangalore/>Continue...</a></div>
+   </div>
+   
+   
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Earlier posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/01/algiers/" title="link to Microcorruption - Algiers: Write-up">Microcorruption - Algiers: Write-up</a></h2>
+       <p class="excerpt"></p>A write-up on the solution for the microcorruption level Algiers. The thought process behind the solution is also included. At the end a 20 byte solution with 7294 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-01-23 15:37:10 +1100" class="post-list__meta--date date">2019-01-23</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/01/algiers/>Continue...</a></div>
+   </div>
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "zijunh.github.io/2019/01/vladivostok/";
+        this.page.identifier = "/2019/01/vladivostok/";
+    };
+
+    var disqus_shortname = 'zijunh';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>To view<a href="http://disqus.com/?ref_noscript"> Disqus </a>Comments, please enable JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
+
+            <section class="footer">
+    <footer>
+    	<span class="footer__copyright">Created under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        <span class="footer__copyright">Generated by <a href="https://jekyllrb.com">Jekyll</a> at 2019-12-09. Many thanks to <a href="https://pages.github.com/">Github</a> for the hosting service</span>
+        <span class="footer__copyright">Created by <a href="https://github.com/ZijunH/">@ZijunH</a> using the <a href="https://github.com/onevcat/vno-jekyll">Vno - Jekyll</a> theme by @onevcat. Source code found on <a href="https://github.com/ZijunH/zijunh.github.io">github</a> - &copy; 2019</span>
+    </footer>
+</section>
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-132056744-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    
+  </body>
+
+</html>

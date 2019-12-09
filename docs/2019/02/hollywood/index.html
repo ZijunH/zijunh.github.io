@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Microcorruption - Hollywood: Write-up</title>
+  <meta name="description" content="A write-up on the solution for the microcorruption level Hollywood. The thought process behind the solution is also included. At the end a 5 byte solution wi...">
+  <meta name="author" content="Zijun Hui">
+  <meta name="keywords" content="microcorruption, hollywood, solution, tip, answer, ctf, wargames, 3085563, clock cycle, 5, input">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Microcorruption - Hollywood: Write-up">
+  <meta name="twitter:description" content="A write-up on the solution for the microcorruption level Hollywood. The thought process behind the solution is also included. At the end a 5 byte solution wi...">
+  <meta name="twitter:keywords" content="microcorruption, hollywood, solution, tip, answer, ctf, wargames, 3085563, clock cycle, 5, input">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Microcorruption - Hollywood: Write-up">
+  <meta property="og:description" content="A write-up on the solution for the microcorruption level Hollywood. The thought process behind the solution is also included. At the end a 5 byte solution wi...">
+  <meta name="og:keywords" content="microcorruption, hollywood, solution, tip, answer, ctf, wargames, 3085563, clock cycle, 5, input">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
+  <link rel="canonical" href="zijunh.github.io/2019/02/hollywood/">
+  <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="zijunh.github.io/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+  
+</head>
+
+
+  <body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+    
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="Go to Zijun Hui's page" class="blog-button"><img src="/assets/images/avatar.jpg" width="80" alt="Zijun Hui logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="Link to homepage for Zijun Hui" class="blog-button">Zijun Hui</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">Doing what I like</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">Random thoughts and random solutions on computer science</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        <p class="panel-cover__description">Welcome to my world</p>
+        
+        
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="Visit blog" class="blog-button">Home</a></li>
+                
+                  <li class="navigation__item"><a href="/categories.html#blog" title="Categoies">Categories</a></li>
+                
+                
+              </ul>
+            </nav>
+          </div>
+          
+          <div><nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  
+
+  
+  <!-- Github -->
+  <li class="navigation__item">
+    <a href="https://github.com/ZijunH" title="@ZijunH 的 Github" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+  
+  
+  
+
+  
+
+  <!-- RSS -->
+  <li class="navigation__item">
+    <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+  
+  <!-- Email -->
+  <li class="navigation__item">
+    <a href="mailto:allenhui1220@outlook.com" title="Contact me">
+      <i class='social fa fa-envelope'></i>
+      <span class="label">Email</span>
+    </a>
+  </li>
+  
+
+  </ul>
+</nav>
+</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-red"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2019-02-25 21:22:19 +1100" itemprop="datePublished" class="post-meta__date date">2019-02-25</time> &#8226; <span class="post-meta__tags tags">microcorruption, solution, wargames</span>
+    </div>
+    <h1 class="post-title">Microcorruption - Hollywood: Write-up</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="initial-information">Initial information</h2>
+
+<p>In the manual for the lock, it claims “this lock is not attached to any hardware security module”, suggesting no interrupts will be used to open the door. This implies the password must be stored in memory; if we can reverse engineer the program in debug, we can obtain the password. However, this could be difficult due to the “new hardware random number generator”, which makes it “impossible to know where the password will be”. This is also quite obvious looking at the extremely short and garbage-looking code that is displayed by the disassembly.</p>
+
+<h2 id="the-input">The input</h2>
+
+<p>We can only enter one string for the password. I did not check for the length as the initial information suggests the only way to solve the problem is to reverse engineer the password itself.</p>
+
+<h2 id="the-exploit">The exploit</h2>
+
+<p>Clearly, the input string will be compared with the password at some point to verify it. Therefore, we can focus on the program after the input of the string, which saves us some time and effort. As the online disassembler is not useful during the process, I recommend using a better disassembler with a scripting functionality that supports the MSP430 architecture. The only one that appears to support MSP430 is IDA pro, which is very expensive. I did not have the luxury to use it, so I will be using the online disassembler with some javascript (only disadvantage is slow) to solve this problem.</p>
+
+<p>After entering the password, one can search for the string within the memory. The process must be repeated many time to ensure its storage location is not randomised as well. Eventually, we can find the input string stored at 0x2600.</p>
+
+<p>Now, we must step through the program to find out what is happening. The useful instructions are selected and shown below:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+
+3240 00a0      mov	#0xa000, sr 
+b012 1000      call	#0x10
+
+...
+
+0c4f           mov	r15, r12
+3cf0 fe0f      and	#0xffe, r12
+3c50 00e0      add	#0xe000, r12
+
+...
+
+8c4f 0000      mov	r15, 0x0(r12)
+...
+8c4f 0200      mov	r15, 0x2(r12)
+...
+8c4f 0400      mov	r15, 0x4(r12)
+...
+8c4f 0600      mov	r15, 0x6(r12)
+...
+8c4f 0800      mov	r15, 0x6(r12)
+...
+8c4f 0a00      mov	r15, 0xa(r12)
+...
+8c4f 0c00      mov	r15, 0xc(r12)
+
+...
+
+004c           br	r12
+</code></pre></div></div>
+
+<p>From experimentation, calling the interrupt with 0xa000 stores a random number in r15. The program then calculated address within the range 0xe000 and 0xefff and stores it in r12. 16 bytes of information are written, starting from r12. Eventually, the program jumps to r12, where the written information is executed. From this segment of code, we can hypothesis the values stored at r12 are the unobfuscated instructions that does the password comparison. This is proved when the first instruction is <code class="highlighter-rouge">mov #0x2600, r5</code>; recall 0x2600 is the address of the input. The long sequences  of code we found are merely used to unobfuscated the instructions.</p>
+
+<p>To proceed with our analysis we need to obtain all the instructions that are ran at r12. This requires use to step through the massive loops of instructions that unobfuscate the code. This will take too much effort manuually, so a script is required. Even though the online debugger does not have a scripting function, we can write a small javascript program that utilises the <code class="highlighter-rouge">parse</code> function, which parses its first argument as a command entered in the debugger. We can then store all the instructions executed at any address that starts with ‘e’. In this program, I have calculated the offsets for some important code fragments in the program to slightly speed up the program. As the debugging process is performed on the server, an 1 second delay is added to allow the information to transfer. This results in the following program:</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">dic</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="kd">function</span> <span class="nx">sleep</span><span class="p">(</span><span class="nx">ms</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">resolve</span> <span class="o">=&gt;</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">ms</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">runCode</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">while</span><span class="p">(</span><span class="kc">true</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"reg0"</span><span class="p">).</span><span class="nx">textContent</span> <span class="o">==</span> <span class="s2">"0010"</span><span class="p">){</span>
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"s"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">target</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="s2">"0x"</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"reg0"</span><span class="p">).</span><span class="nx">textContent</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x4a</span><span class="p">;</span>
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"break "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"c"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"s"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"unbreak "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">target</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="s2">"0x"</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"reg0"</span><span class="p">).</span><span class="nx">textContent</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0xa</span><span class="p">;</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"break "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"c"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"unbreak "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">target</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="s2">"0x"</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"reg12"</span><span class="p">).</span><span class="nx">textContent</span><span class="p">);</span>
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"break "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"c"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"unbreak "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="k">while</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"reg0"</span><span class="p">).</span><span class="nx">textContent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'e'</span><span class="p">){</span>
+                <span class="nx">dic</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"insnbytes"</span><span class="p">).</span><span class="nx">textContent</span><span class="p">);</span>
+                <span class="nx">parse</span><span class="p">(</span><span class="s2">"s"</span><span class="p">);</span>
+                <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">target</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="s2">"0x"</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"reg0"</span><span class="p">).</span><span class="nx">textContent</span><span class="p">)</span> <span class="o">+</span> <span class="mh">0x38</span><span class="p">;</span>
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"break "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"c"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"unbreak "</span> <span class="o">+</span> <span class="nx">target</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">padStart</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">));</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="nx">parse</span><span class="p">(</span><span class="s2">"s"</span><span class="p">);</span>
+            <span class="kr">await</span> <span class="nx">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">runCode</span><span class="p">()</span>
+
+<span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">dic</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">dic</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>This program runs for around 10 minutes for a input with 2 bytes, and around 30 for one with 6 bytes. The results can then be copied into a text file, where the <code class="highlighter-rouge">mov</code> and <code class="highlighter-rouge">br</code> instructions can be removed using <code class="highlighter-rouge">egrep</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>egrep -v "^(3c40|004d)" uncleaned.txt | tee cleaned.txt
+</code></pre></div></div>
+
+<p>Disassembling the remaining instructions provides the following code:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>3540 0026      mov	#0x2600, r5
+0643           clr	r6
+
+//loop start
+2455           add	@r5, r4
+8410           swpb	r4
+36e5           xor	@r5+, r6
+06e4           xor	r4, r6
+04e6           xor	r6, r4
+06e4           xor	r4, r6
+8593 0000      tst	0x0(r5)
+0742           mov	sr, r7
+27f3           and	#0x2, r7
+0711           rra	r7
+17e3           xor	#0x1, r7
+8710           swpb	r7
+0711           rra	r7
+8711           sxt	r7
+8710           swpb	r7
+8711           sxt	r7
+3840 184b      mov	#0x4b18, r8
+08f7           and	r7, r8
+37e3           xor	#-0x1, r7
+37f0 aa47      and	#0x47aa, r7
+0857           add	r7, r8
+0743           clr	r7
+0c48           mov	r8, r12
+004d           br	12
+//loop end
+
+3490 b1fe      cmp	#0xfeb1, r4
+0742           mov	sr, r7
+0443           clr	r4
+3690 9892      cmp	#0x9298, r6
+07f2           and	sr, r7
+0643           clr	r6
+0711           rra	r7
+17e3           xor	#0x1, r7
+8710           swpb	r7
+0711           rra	r7
+0711           rra	r7
+0711           rra	r7
+0711           rra	r7
+02d7           bis	r7, sr
+</code></pre></div></div>
+
+<p>It appears 2 values are computed from the input and are stored in r4 and r6. The registers are then compared with 2 magic values, which act as validation for the input. If it doesn’t pass, a value with the <code class="highlighter-rouge">CPU_OFF</code> flag set to 1 is inserted into sr, which causes termination of the program. The ending condition of the loop is checked by <code class="highlighter-rouge">tst 0x0(r5)</code>, and everything in the loop after that command appears to be a convoluted way to continue the loop. The loop body can thus be cleaned, and transformed into:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2455           add	@r5, r4
+8410           swpb	r4
+36e5           xor	@r5+, r6
+06e4           xor	r4, r6
+04e6           xor	r6, r4
+06e4           xor	r4, r6
+</code></pre></div></div>
+
+<p>Now we will look at the end of the program closely. The <code class="highlighter-rouge">CPU_OFF</code> flag is on the 5th bit from the right, and it cannot be set at the end of the program or the CPU will be turned off, requiring <code class="highlighter-rouge">reset</code> to reboot it. The flag is not set when r4 is exactly 0xfeb1 and r6 is exactly 0x9298. This can be derived by tracing the change of the location of the bit in r7 as it is maniputed by the various instructions such as <code class="highlighter-rouge">rra</code> and <code class="highlighter-rouge">swpb</code>.</p>
+
+<h2 id="the-solution">The solution</h2>
+
+<p>With knowledge of exactly how the input is validated, we can write a program that brute forces all possible values or a set of equations that solves for the input. The latter is difficult and takes effort. We have no time constraints, so brute force is what we will use. Initially, I was lazy and tried to utilise <code class="highlighter-rouge">itertools.product</code> in python so I dont need to generate the number myself. However, I underestimated the time required for the brute force, as the python solution took too long. Eventually, I wrote the following the C++ program, which calculates all 6 byte solution (it implicitly includes all 5, 4, 3, 2, 1 byte solutions, where the end is padded by 0x0).</p>
+
+<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="cp">#include &lt;bits/stdc++.h&gt;
+</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="n">R4_MAGIC</span> <span class="o">=</span> <span class="mh">0xfeb1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">R6_MAGIC</span> <span class="o">=</span> <span class="mh">0x9298</span><span class="p">;</span>
+
+<span class="kt">bool</span> <span class="nf">genNext</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">cur</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">carry</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">cur</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">carry</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">((</span><span class="o">*</span><span class="n">cur</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0xff</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">cur</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">carry</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">cur</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x0</span><span class="p">;</span>
+            <span class="n">carry</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="o">!</span><span class="n">carry</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">cur</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">genNext</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cur</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">r4</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">r6</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">cur</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">r5Val</span> <span class="o">=</span> <span class="n">cur</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">cur</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mh">0x100</span><span class="p">;</span>
+            <span class="n">r4</span> <span class="o">=</span> <span class="p">(</span><span class="n">r4</span> <span class="o">+</span> <span class="n">r5Val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xffff</span><span class="p">;</span>
+            <span class="n">r4</span> <span class="o">=</span> <span class="p">((</span><span class="n">r4</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">r4</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xffff</span><span class="p">;</span>
+            <span class="n">r6</span> <span class="o">^=</span> <span class="n">r5Val</span><span class="p">;</span>
+            <span class="n">r6</span> <span class="o">^=</span> <span class="n">r4</span><span class="p">;</span>
+            <span class="n">r4</span> <span class="o">^=</span> <span class="n">r6</span><span class="p">;</span>
+            <span class="n">r6</span> <span class="o">^=</span> <span class="n">r4</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">r4</span> <span class="o">==</span> <span class="n">R4_MAGIC</span> <span class="n">and</span> <span class="n">r6</span> <span class="o">==</span> <span class="n">R6_MAGIC</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">:</span> <span class="n">cur</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="mh">0xff</span> <span class="o">&amp;</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Running the program for around 10 minutes generates the first 6 byte solution:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 4 a5 3c f1 5b
+</code></pre></div></div>
+
+<p>Going to the “Hall of fame”, we can see the shortest solution is 5 bytes only. We can modify the loop in <code class="highlighter-rouge">genNext</code> so the last byte is ignored. After around 30 minutes, the first solution is generated:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>49 49 b5 de 96 0
+</code></pre></div></div>
+
+<p>The last byte is ignored and the first 5 bytes are inputted, unlocking the door.</p>
+
+<h2 id="some-thoughts">Some thoughts</h2>
+
+<p>This question is not as difficult as the previous one. The solution is a lot more blant compared to the previous question, as there is only 1 way of attacking it (unless I missed something). This question is more of a test of reverse engineering skills rather than exploitation skills, which disallows creative solutions. Nonetheless, this is still an entertaining challenge.</p>
+
+<p>This question also marks the end of the microcorruption challenge series. During the process, I have learnt quite a lot about assembly code and exploitation in general. I hope the skills can assist me in day-to-day programming in the future.</p>
+
+<h2 id="read-more">Read more</h2>
+
+<p><a href="http://www.ti.com/lit/ug/slau144j/slau144j.pdf">MSP430 instruction guide</a></p>
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Recent posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/04/nebula/" title="link to Exploit Education - Nebula: Write-up (Part 1)">Exploit Education - Nebula: Write-up (Part 1)</a></h2>
+       <p class="excerpt">Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race co...</p>
+       <div class="post-list__meta"><time datetime="2019-04-07 22:40:32 +1000" class="post-list__meta--date date">2019-04-07</time> &#8226; <span class="post-list__meta--tags tags">exploit education, solution, nebula</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/04/nebula/>Continue...</a></div>
+   </div>
+   
+   
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Earlier posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/02/chernobyl/" title="link to Microcorruption - Chernobyl: Write-up">Microcorruption - Chernobyl: Write-up</a></h2>
+       <p class="excerpt"></p>A write-up on the solution for the microcorruption level Chernobyl. The thought process behind the solution is also included. At the end a 69 byte (nice) solution with 229009 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-02-22 00:52:34 +1100" class="post-list__meta--date date">2019-02-22</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargame</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/02/chernobyl/>Continue...</a></div>
+   </div>
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "zijunh.github.io/2019/02/hollywood/";
+        this.page.identifier = "/2019/02/hollywood/";
+    };
+
+    var disqus_shortname = 'zijunh';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>To view<a href="http://disqus.com/?ref_noscript"> Disqus </a>Comments, please enable JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
+
+            <section class="footer">
+    <footer>
+    	<span class="footer__copyright">Created under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        <span class="footer__copyright">Generated by <a href="https://jekyllrb.com">Jekyll</a> at 2019-12-09. Many thanks to <a href="https://pages.github.com/">Github</a> for the hosting service</span>
+        <span class="footer__copyright">Created by <a href="https://github.com/ZijunH/">@ZijunH</a> using the <a href="https://github.com/onevcat/vno-jekyll">Vno - Jekyll</a> theme by @onevcat. Source code found on <a href="https://github.com/ZijunH/zijunh.github.io">github</a> - &copy; 2019</span>
+    </footer>
+</section>
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-132056744-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    
+  </body>
+
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Microcorruption - Chernobyl: Write-up</title>
+  <meta name="description" content="A write-up on the solution for the microcorruption level Chernobyl. The thought process behind the solution is also included. At the end a 69 byte (nice) sol...">
+  <meta name="author" content="Zijun Hui">
+  <meta name="keywords" content="microcorruption, chernobyl, solution, tip, answer, ctf, wargames, 229009, clock cycle, 69, input">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Microcorruption - Chernobyl: Write-up">
+  <meta name="twitter:description" content="A write-up on the solution for the microcorruption level Chernobyl. The thought process behind the solution is also included. At the end a 69 byte (nice) sol...">
+  <meta name="twitter:keywords" content="microcorruption, chernobyl, solution, tip, answer, ctf, wargames, 229009, clock cycle, 69, input">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Microcorruption - Chernobyl: Write-up">
+  <meta property="og:description" content="A write-up on the solution for the microcorruption level Chernobyl. The thought process behind the solution is also included. At the end a 69 byte (nice) sol...">
+  <meta name="og:keywords" content="microcorruption, chernobyl, solution, tip, answer, ctf, wargames, 229009, clock cycle, 69, input">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
+  <link rel="canonical" href="zijunh.github.io/2019/02/chernobyl/">
+  <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="zijunh.github.io/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+  
+</head>
+
+
+  <body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+    
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="Go to Zijun Hui's page" class="blog-button"><img src="/assets/images/avatar.jpg" width="80" alt="Zijun Hui logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="Link to homepage for Zijun Hui" class="blog-button">Zijun Hui</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">Doing what I like</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">Random thoughts and random solutions on computer science</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        <p class="panel-cover__description">Welcome to my world</p>
+        
+        
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="Visit blog" class="blog-button">Home</a></li>
+                
+                  <li class="navigation__item"><a href="/categories.html#blog" title="Categoies">Categories</a></li>
+                
+                
+              </ul>
+            </nav>
+          </div>
+          
+          <div><nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  
+
+  
+  <!-- Github -->
+  <li class="navigation__item">
+    <a href="https://github.com/ZijunH" title="@ZijunH 的 Github" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+  
+  
+  
+
+  
+
+  <!-- RSS -->
+  <li class="navigation__item">
+    <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+  
+  <!-- Email -->
+  <li class="navigation__item">
+    <a href="mailto:allenhui1220@outlook.com" title="Contact me">
+      <i class='social fa fa-envelope'></i>
+      <span class="label">Email</span>
+    </a>
+  </li>
+  
+
+  </ul>
+</nav>
+</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-red"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2019-02-22 00:52:34 +1100" itemprop="datePublished" class="post-meta__date date">2019-02-22</time> &#8226; <span class="post-meta__tags tags">microcorruption, solution, wargame</span>
+    </div>
+    <h1 class="post-title">Microcorruption - Chernobyl: Write-up</h1>
+  </header>
+
+  <section class="post">
+    <p>Before discussing the solutions, I would like to say this question was a blast. I obtained the straight forward solution relatively quickly but shortening the input size took quite a lot of time. I attempted 4-5 different possible methods, but they were all a little off at the end, preventing me from successfully opening the lock. The complexity (and length) of the code warrants many ways of attacking the problem (as evident in the varying input length), making it the best challenge (so far). Though my input size is already quite small, someone has a 60 byte solution, meaning there are still ways to attack the problem that I haven’t explored.</p>
+
+<h2 id="the-input">The input</h2>
+
+<p>The program accepts one string with length 0x550. The input is operated by the following rules:</p>
+
+<ul>
+  <li>The input is separated into different commands by ‘;’</li>
+  <li>Each command can start with ‘a’ or ‘n’. Anything else will throw an error and cause early termination of the program</li>
+  <li>Preprocessing of the input converts all spaces (0x20) to 0x0, which is used to separate command arguments</li>
+  <li>Both types of commands take 2 arguments: “username” and “pin”. Arguments after the first 2 will be ignored</li>
+  <li>If the command starts with ‘a’, arguments will be read starting from the 8th character</li>
+  <li>If the command starts with ‘n’, arguments will be read starting from the 5th character</li>
+  <li>The high bit of the pin cannot be set</li>
+  <li>No duplicate usernames allowed</li>
+</ul>
+
+<p>The input buffer has a size of 0x600, which is filled with 0x0. The buffer is wiped after every input, preventing a simple overflow attack using the input.</p>
+
+<h2 id="initial-overview">Initial overview</h2>
+
+<p>As the entire program is quite complex, a good overview of the various function calls and operations is required. We can copy all the instructions into the file <code class="highlighter-rouge">initial.txt</code>, and then <code class="highlighter-rouge">grep</code> it to identify all function calls. This can be performed efficiently using the following bash command, producing the results in <code class="highlighter-rouge">final.txt</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat initial.txt | egrep '^(\w{4} )|(call)' | tee final.txt
+</code></pre></div></div>
+
+<p>I have collected the important parts of the output:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>4438 &lt;main&gt;
+443a:  b012 664b      call  #0x4b66 &lt;run&gt;
+
+4778 &lt;create_hash_table&gt;
+478c:  b012 7846      call  #0x4678 &lt;malloc&gt;
+47ae:  b012 7846      call  #0x4678 &lt;malloc&gt;
+47b8:  b012 7846      call  #0x4678 &lt;malloc&gt;
+47e8:  b012 7846      call  #0x4678 &lt;malloc&gt;
+
+4832 &lt;add_to_table&gt;
+4866:  b012 d448      call  #0x48d4 &lt;rehash&gt;
+4870:  b012 0e48      call  #0x480e &lt;hash&gt;
+
+48d4 &lt;rehash&gt;
+490a:  b012 7846      call  #0x4678 &lt;malloc&gt;
+4914:  b012 7846      call  #0x4678 &lt;malloc&gt;
+493e:  b012 7846      call  #0x4678 &lt;malloc&gt;
+4988:  b012 3248      call  #0x4832 &lt;add_to_table&gt;
+499e:  b012 1c47      call  #0x471c &lt;free&gt;
+49ae:  b012 1c47      call  #0x471c &lt;free&gt;
+49b4:  b012 1c47      call  #0x471c &lt;free&gt;
+
+49cc &lt;get_from_table&gt;
+49de:  b012 0e48      call  #0x480e &lt;hash&gt;
+4a0a:  b012 7c4d      call  #0x4d7c &lt;strcmp&gt;
+
+4b66 &lt;run&gt;
+4b7c:  b012 7847      call  #0x4778 &lt;create_hash_table&gt;
+4b86:  b012 504d      call  #0x4d50 &lt;puts&gt;
+4b8e:  b012 504d      call  #0x4d50 &lt;puts&gt;
+4b96:  b012 504d      call  #0x4d50 &lt;puts&gt;
+4bb6:  b012 404d      call  #0x4d40 &lt;getsn&gt;
+4c0c:  b012 cc49      call  #0x49cc &lt;get_from_table&gt;
+4c90:  b012 cc49      call  #0x49cc &lt;get_from_table&gt;
+4c9c:  b012 504d      call  #0x4d50 &lt;puts&gt;
+4caa:  b012 4844      call  #0x4448 &lt;printf&gt;
+4cb8:  b012 3248      call  #0x4832 &lt;add_to_table&gt;
+4cc2:  b012 504d      call  #0x4d50 &lt;puts&gt;
+</code></pre></div></div>
+
+<h2 id="the-storage">The storage</h2>
+
+<p>Each username and pin are stored in a hash table in the heap. Similar to <a href="2019/01/algiers/">algiers</a>, the heap is implemented as a doubly linked list. Each element of the list has the following structure:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;element&gt;
+    &lt;6 byte header&gt;
+        &lt;2 byte pointer to the previous block&gt;
+        &lt;2 byte pointer to the next block&gt;
+        &lt;2 byte size, with the least significant bit being indicating IN_USE&gt;
+    &lt;content&gt;
+</code></pre></div></div>
+
+<p>Knowing hash tables are used, it should be clear hash collisions are possible. With only 8 bins, the probability of it happening is extremely likely. In this example, hash collisions are resolved by chaining: elements with the same hash are appended at the end of a list. The memory area used by the hash table can be categorised into 2 sections: metadata and content. Initially, the hash table has the following structure, with each section belonging to a different block in the heap linked list:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;metadata&gt;
+    &lt;10 byte misc values, including maximum size, addr of other metadata&gt;
+    &lt;16 byte addr of the bins&gt;
+    &lt;16 byte number of elements in each bin&gt;
+&lt;content&gt;
+    &lt;88 byte bin 0&gt;
+    &lt;88 byte bin 1&gt;
+    &lt;88 byte bin 2&gt;
+    &lt;88 byte bin 3&gt;
+    &lt;88 byte bin 4&gt;
+    &lt;88 byte bin 5&gt;
+    &lt;88 byte bin 6&gt;
+    &lt;88 byte bin 7&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/images/pic2.png" alt="Initial form of hash table" />
+<em>Figure showing initial form of the hash table. Red boxes represent header of the heap blocks</em></p>
+
+<h2 id="hash">hash</h2>
+
+<p>Allocating the username and pin combination to the bins involve hashing the username using the hash function, which is implemented as follows:</p>
+
+<p><img src="/assets/images/pic3.png" alt="Implementation of the hash function" />
+<em>Figure showing implementation of the hash function</em></p>
+
+<p>The hash function only used the first 15 characters of the username to produce a 4 digit hexadecimal number, which is moduloed by the number of bins (8 initially). The bin allocation can be summarised using the following python code:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">hashVal</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">val</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">su</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)):</span>
+        <span class="n">su</span> <span class="o">+=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x1f</span> <span class="o">**</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="s">"</span><span class="si">%.4</span><span class="s">x"</span><span class="o">%</span><span class="p">(</span><span class="n">su</span> <span class="o">%</span> <span class="mh">0x10000</span> <span class="o">%</span> <span class="mh">0x8</span><span class="p">)</span></code></pre></figure>
+
+<p>The pin is hashed in a similar way, but with additional modifications. However, I did not look into that algorithm, as it is not needed for the solution. No matter how long the inputted pin is, the hashed result will always be 2 bytes long.</p>
+
+<p>After the bin number is calculated, the first 15 characters of the username is appended at the end of the chain for that bin, followed by a null byte (indicating end of string) and the hashed result of the pin. Notice both the username and pin length are limited by the algorithm, preventing any sort of overflow attack using the username and pin alone.</p>
+
+<h2 id="rehash">rehash</h2>
+
+<p>The hash table becomes full when the total number of usernames and pins exceed a set size. Initially, this size is set to 11, allowing 11 usernames. Rehashing is triggered after the input of the 12th username, but before its allocation in the table. The program checks the input is valid and stores it temporarily in the input buffer. Rehashing creates a new hash table with double the number of bins using <code class="highlighter-rouge">malloc</code>. Then it allocates the original values to the new bins, and <code class="highlighter-rouge">free</code>s the old ones. The hashing result remains the same, but it will now be moduloed by a different number, thus achieving the goal of redistributing the values into different bins.</p>
+
+<p>The exact implementation of <code class="highlighter-rouge">rehash</code> is not significant, but the function call to <code class="highlighter-rouge">malloc</code> before <code class="highlighter-rouge">free</code> is.</p>
+
+<h2 id="malloc-in-rehash">malloc in rehash</h2>
+
+<p><code class="highlighter-rouge">malloc</code> creates a specified size of free memory from the heap linked list. It starts at a designated block of the linked list and checks if the block is in use by the <code class="highlighter-rouge">IN_USE</code> bit specified in <code class="highlighter-rouge">size</code> of the block header.</p>
+
+<p>If the block is in use, the function skips to the next block using <code class="highlighter-rouge">.next</code> of the header. This process is repeated until one of the following two possible events happen:  <code class="highlighter-rouge">.next</code> points to a blocker that with a lower address compared to the current, or <code class="highlighter-rouge">.next</code> points to the initial block. These two events indicates <code class="highlighter-rouge">malloc</code> has probed all blocks within the linked list (second event is special case for 1 memory block only, where <code class="highlighter-rouge">.next</code> points to itself), and the program crashes with the error “heap exhausted”.</p>
+
+<p>If the block is not in use, its size is checked. When the size of the block is the same as the specified size, the <code class="highlighter-rouge">IN_USE</code> bit is set and the function returns the address of the block. If the size is not the same, the empty block will be divided into 2, with the lower-addressed block labelled as <code class="highlighter-rouge">IN_USE</code> with the required size. This block points to the other block through <code class="highlighter-rouge">.next</code>, and the header of the blocks are updated accordingly.</p>
+
+<p>rehash calls <code class="highlighter-rouge">malloc</code> multiple times, and most of the time the search starts at 0x5000 (start of the heap).</p>
+
+<h2 id="free-in-rehash">free in rehash</h2>
+
+<p><code class="highlighter-rouge">free</code> removes a block of used memory and attempts to merge it with the proceeding or preceding not in use block. As seen in <a href="2019/01/algiers/">algiers</a>, it can be summarised by the following code:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>r15 = &amp;freeing chunk
+r13 = r15.size
+r14 = r15.prev
+r12 = r14.size
+if (!r14.IN_USE){
+    r12 += 6
+    r12 += r13 
+    r14.size = r12
+    r14.next = r15.next
+    r13 = r15.next
+    r13.prev = r14
+    r15 = r15.prev
+}
+r14 = r15.next
+r13 = r14.size 
+if (!r14.IN_USE){
+    r13 += r15.size
+    r13 += 6
+    r15.size = r13
+    r14.next = r15.next
+    r14.prev = r15
+}
+</code></pre></div></div>
+
+<p>The locations that will be <code class="highlighter-rouge">free</code>d are obtained from the hash table’s metadata, which are the addresses of the bins.</p>
+
+<p>It is important to notice <code class="highlighter-rouge">malloc</code> and <code class="highlighter-rouge">free</code> obtain the bin addresses through different methods. While <code class="highlighter-rouge">malloc</code> uses the <code class="highlighter-rouge">.next</code> in headers, <code class="highlighter-rouge">free</code> uses pre-defined addresses.</p>
+
+<h2 id="the-exploit">The exploit</h2>
+
+<p>The exploit depends on the 6th username in each bin overwriting the header of the next bin. The overwriting process starts at the 1st character, requiring no additional padding. Effectively, this allows control of the <code class="highlighter-rouge">.prev</code>, <code class="highlighter-rouge">.next</code>, and the <code class="highlighter-rouge">.size</code> attributes. The 11th username in the bin can also overwrite the header of the bin after the next. However, only the 7th character in the username can do so, thus requiring a 6-character padding within the username. With full control of a block header, we can use <code class="highlighter-rouge">free</code> to overwrite at least one byte in the program, which leads to many different possibilities of attack. Looking at the call structure of the program, it appears <code class="highlighter-rouge">free</code> is only called in <code class="highlighter-rouge">rehash</code>, which occurs after the input of the 12th username but before its allocation.</p>
+
+<p>The outline of the plan of attack simple:</p>
+
+<ol>
+  <li>Input 5 dummy usernames that belong to the same bin2</li>
+  <li>Input a specifically crafted string that overwrites the next header</li>
+  <li>Input 5 more dummy usernames</li>
+  <li>Input 1 dummy username that triggers <code class="highlighter-rouge">free</code> in <code class="highlighter-rouge">rehash</code></li>
+</ol>
+
+<p>Voila! Now we should have some control of the flow of the program, allowing many different routes of attack. However, the exact details are difficult to resolve, and I will detail them in the following sections.</p>
+
+<h3 id="hash-collision">Hash collision</h3>
+
+<p>Control exactly which bin each username and pin combination go to is required for the exploit to work. As there are only 8 bins, collisions are extremely likely. Since the hashing function is already reverse engineered, I wrote a script that calculates the bin location for all 1 character usernames, which will be used as our dummy usernames. The hex encoding of the characters can be obtained by <code class="highlighter-rouge">readStrs(res[binNo])</code>.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="n">STR_LENGTH</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">hashVal</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">val</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">su</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)):</span>
+        <span class="n">su</span> <span class="o">+=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x1f</span> <span class="o">**</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">su</span> <span class="o">%</span> <span class="mh">0x8</span>
+
+<span class="k">def</span> <span class="nf">readStrs</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+        <span class="k">for</span> <span class="nb">chr</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="si">%.2</span><span class="s">x"</span><span class="o">%</span><span class="nb">ord</span><span class="p">(</span><span class="nb">chr</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s">""</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">()</span>
+
+<span class="n">strs</span> <span class="o">=</span> <span class="s">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mh">0x100</span><span class="p">)])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">pos</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="s">''</span><span class="o">.</span><span class="n">join</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">strs</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">STR_LENGTH</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">:</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">hashVal</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">res</span><span class="p">):</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">res</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></code></pre></figure>
+
+<h3 id="which-bin">Which bin?</h3>
+
+<p>It is natural to wonder which bin header our sixth input should overwrite. Careful inspection of <code class="highlighter-rouge">free</code> reveals that if the previous block has the <code class="highlighter-rouge">IN_USE</code> turned off, <code class="highlighter-rouge">.prev</code> of the block pointed by <code class="highlighter-rouge">.next</code> will be overwritten. This may overwrite the carefully crafted header we created if the block at addr <code class="highlighter-rouge">.next</code> is the block with the overwritten header. This is guaranteed to happen in every block after the first, as <code class="highlighter-rouge">free</code> occurs from bin 0 to the last bin, clearing <code class="highlighter-rouge">IN_USE</code> sequentially. To prevent this, we have to overwrite the header of bin 1, as <code class="highlighter-rouge">.prev</code> of bin 0 pointed to the hash table metadata, which will definitely be in use. To overwrite the header in bin 1, the first 6 inputs must be placed in bin 0.</p>
+
+<h3 id="how-to-overwrite-at-the-desired-location">How to overwrite at the desired location?</h3>
+
+<p>Many restrictions apply when overwriting the header due to checks in the program. Most of the checks are performed by <code class="highlighter-rouge">malloc</code>, which has strict rules on the value stored in <code class="highlighter-rouge">.next</code>. The simple (one I initially tried) solution utilises the 11th input to overwrite a second header for the block. The first overwrite changes the <code class="highlighter-rouge">.next</code> of the header to point it towards the third block downstream. This hides the second block downstream from <code class="highlighter-rouge">malloc</code>, bypassing its checks. The <code class="highlighter-rouge">.prev</code> of the second block is set to a return pointer location on the stack, <code class="highlighter-rouge">.next</code> to a custom shell code location. With this, we can successfully unlock the door. However, this requires a high input length due to the custom shell code and extra padding size required for the second input, so I attempted to find an exploit that only requires one overwritten the header.</p>
+
+<p>When overwriting the header, the location we want to overwrite is stored in either <code class="highlighter-rouge">.prev</code> or <code class="highlighter-rouge">.next</code>. Storing it in <code class="highlighter-rouge">.prev</code> requires the 2 byte value at 0x4(<code class="highlighter-rouge">.prev</code>) to be even (not <code class="highlighter-rouge">IN_USE</code>) to trigger the required <code class="highlighter-rouge">if</code> statement correctly. Storing it in <code class="highlighter-rouge">.next</code> means the address must be larger than the current address, or <code class="highlighter-rouge">malloc</code> will crash the program. As the address we need to overwrite is often the program code or a value in the stack, the latter case is highly unlikely, suggesting <code class="highlighter-rouge">.prev</code> must hold the address we want to overwrite.</p>
+
+<h2 id="what-to-overwrite">What to overwrite?</h2>
+
+<p>As <code class="highlighter-rouge">.prev</code> will be used to store the address, the first <code class="highlighter-rouge">if</code> statement in <code class="highlighter-rouge">free</code> will be triggered. Thus, the value we want write will be stored at <code class="highlighter-rouge">.next</code>, which must follow the <code class="highlighter-rouge">malloc</code> rules: <code class="highlighter-rouge">.next</code> must be after current block address. The value must also point to a address with a valid block header with sufficient size for <code class="highlighter-rouge">malloc</code> to use or a <code class="highlighter-rouge">.next</code> that points to a valid chain. This limits the possible values to be approximately  between 0x5000 and 0x5300 (the range our input will be stored at and the range of available block headers).</p>
+
+<p>Our selected value can overwrite one of two things: a return address on the stack or a part of program code. Unfortunately, the former method is not possible. None of the functions call <code class="highlighter-rouge">INT</code> with 0x7f, preventing us from directly opening the door. In addition, the first <code class="highlighter-rouge">if</code> statement in <code class="highlighter-rouge">free</code> also copies the <code class="highlighter-rouge">.prev</code> of the current block and replaces the <code class="highlighter-rouge">.prev</code> of the block pointed by <code class="highlighter-rouge">.next</code>. The stack is also placed between 0x3dd0 and 0x3dff, of which the ‘3d’ prefix refers to a jump statement, changing the program counter (pc) by a large fixed amount. Thus, if we do use the first method, the return address on the stack will be replaced, the pc will jump to the value we refer to, which has the first 2 bytes replaced by a value between the range 0x3dd0 and 0x3dff, causing the pc to jump again, missing our custom shellcode.</p>
+
+<p>Therefore, only the latter method is possible: we must overwrite a part of the program code. Through many trial-and-error attempts and careful observations of the program, I found a potential target in the program: the instruction “add #0x600, sp” at 4cc8. This instruction moves the stack pointer by 0x600, which moves it from the start of the input buffer to the end. By overwriting this instruction, we can prevent movement of the stack pointer, and with a special input, we can direct the return pointer to a arbitrary location (this time without any checks on the input as it is still in buffer).</p>
+
+<p>I planned to direct the return pointer to the <code class="highlighter-rouge">INT</code>. With the control of the stack, we can provide the function with any argument we want. For <code class="highlighter-rouge">INT</code>, an argument of 0x7f opens the lock automatically. The argument is placed 2 bytes behind the return address due to the implementation in the program, so a 2 byte padding is required.</p>
+
+<p>Unfortunately, the instruction at 4cc8 is only reached when an invalid command is entered (not starting with ‘a’ or ‘n’), so a 12th input is required to trigger that section of code. Due to the <code class="highlighter-rouge">pop</code> instructions before the <code class="highlighter-rouge">ret</code>, the stack pointer will move further downstream from the start of the input buffer. This requires some extra padding in the input buffer.</p>
+
+<p><img src="/assets/images/pic3.png" alt="Instructions near 4cc8" />
+<em>Figure showing instructions near 4cc8</em></p>
+
+<h2 id="the-solution">The solution</h2>
+
+<p>The solution requires 12 consecutive commands that each contain a username allocated to bin 0:</p>
+
+<p>5 dummy commands
+1 command with the form &lt;–8 byte “new “–&gt;&lt;–2 byte ‘.prev’–&gt;&lt;–2 byte ‘.next’–&gt;&lt;–2 byte size–&gt;&lt;–2 byte “ “ + pin–&gt;
+5 dummy commands
+1 dummy command that can belong to any bin
+1 invalid command that has the form &lt;–padding–&gt;&lt;–2 byte address of <code class="highlighter-rouge">INT</code>–&gt;&lt;–2 byte padding–&gt;&lt;–7f–&gt;</p>
+
+<p>The dummy commands have the form &lt;–8 byte “new “–&gt;&lt;–1 byte usrname–&gt;&lt;–2 byte “ “ + pin–&gt;</p>
+
+<p>The following inputs (separated by line) requires 95 bytes of input, and they successfully unlock the door:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>6e657720082041
+6e657720182041
+6e657720682041
+6e657720282041
+6e657720302041
+6e657720c64cfc50f5f32041
+6e657720382041
+6e657720402041
+6e657720482041
+6e657720502041
+6e657720582041
+6e657720602041
+aaaaaaaaaaaaaaaaec4caaaa7f
+</code></pre></div></div>
+
+<h3 id="decreasing-the-length">Decreasing the length</h3>
+
+<p>The solution above, however, is not the optimal solution. Experimentation with the pins reveals 0x0 is a valid pin. As the pins play no significant role (from what I found), their values do not matter. One may also remember the input is preprocessed by the program, replacing all 0x20 bytes with 0x0. The above two factors imply the command “6e657720082041” play an equivalent role as “6e657720082000”, which is equivalent to “6e657720080000”. As the input buffer is guaranteed to be filled with 0x0 (it is cleared after each input), the last 2 bytes of the command may be omitted.</p>
+
+<p>Further optimisation can be performed by omitting all bytes after the initial ‘6e’. As the program confirms the command by the initial character instead of the entire string, omitting the remaining values tricks the program into thinking a username of 0x0 was entered. Furthermore, a username of 0x0 conveniently has a hash that allocates it to bin 0, allowing it to be used. However, as duplicate usernames are not allowed, this command can only be used once.</p>
+
+<p>Concatenation of the last 2 commands can be performed as the length of the padding exceeds the length of the command. The commands are separated with ‘;’. As the size of the previous command and ‘;’ is the same as the padding, no further padding is required.</p>
+
+<p>This allows the following inputs, which unlocks the door:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>6e
+6e65772018
+6e65772008
+6e65772028
+6e65772030
+6e657720c64cfc50f5f3
+6e65772038
+6e65772040
+6e65772048
+6e65772050
+6e65772058
+6e6577206020413bec4caaaa7f
+</code></pre></div></div>
+
+<p>The ‘.next’ in the 6th command was not randomly chosen. The instruction with value 0x50fc requires 2 arguments, allowing it to include one of the <code class="highlighter-rouge">push</code> instructions as its argument, thus shortening the padding required by 2 bytes.</p>
+
+<p>Even though this post is already very long, a lot of details are still not covered properly, such as alternative places to overwrite. I experimented with many of these, but they failed to unlock the door due to the many restrictions imposed on the input. Looking at the hall of fame, the minimum input required is only 60 bytes! If anyone is willing to share the answer, please let me know; I have wasted too much time trying to shorten the solution.</p>
+
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Recent posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/02/hollywood/" title="link to Microcorruption - Hollywood: Write-up">Microcorruption - Hollywood: Write-up</a></h2>
+       <p class="excerpt">A write-up on the solution for the microcorruption level Hollywood. The thought process behind the solution is also included. At the end a 5 byte solution with 3085563 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-02-25 21:22:19 +1100" class="post-list__meta--date date">2019-02-25</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/02/hollywood/>Continue...</a></div>
+   </div>
+   
+   
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Earlier posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/02/lagos/" title="link to Microcorruption - Lagos: Write-up">Microcorruption - Lagos: Write-up</a></h2>
+       <p class="excerpt"></p>A write-up on the solution for the microcorruption level Lagos. The thought process behind the solution is also included. At the end a 29 byte solution with 16726 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-02-19 13:52:34 +1100" class="post-list__meta--date date">2019-02-19</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/02/lagos/>Continue...</a></div>
+   </div>
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "zijunh.github.io/2019/02/chernobyl/";
+        this.page.identifier = "/2019/02/chernobyl/";
+    };
+
+    var disqus_shortname = 'zijunh';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>To view<a href="http://disqus.com/?ref_noscript"> Disqus </a>Comments, please enable JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
+
+            <section class="footer">
+    <footer>
+    	<span class="footer__copyright">Created under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        <span class="footer__copyright">Generated by <a href="https://jekyllrb.com">Jekyll</a> at 2019-12-09. Many thanks to <a href="https://pages.github.com/">Github</a> for the hosting service</span>
+        <span class="footer__copyright">Created by <a href="https://github.com/ZijunH/">@ZijunH</a> using the <a href="https://github.com/onevcat/vno-jekyll">Vno - Jekyll</a> theme by @onevcat. Source code found on <a href="https://github.com/ZijunH/zijunh.github.io">github</a> - &copy; 2019</span>
+    </footer>
+</section>
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-132056744-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    
+  </body>
+
+</html>

