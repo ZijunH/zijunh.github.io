@@ -3,8 +3,13 @@ layout: post
 title: "Microcorruption - Vladivostok: Write-up"
 date: 2019-01-24 11:16:29.000000000 +08:00
 excerpt: A write-up on the solution for the microcorruption level Vladivostok. The thought process behind the solution is also included. At the end a 17 byte solution with 101670 CPU cycle time is achieved.
-tags: [microcorruption, solution, wargames]
+tags: 
+  - microcorruption
+  - solution
+  - wargames
 keywords: [microcorruption, algiers, solution, tip, answer, ctf, wargames, 101670, clock cycle, 17, input]
+category: 
+  - microcorruption
 ---
 
 ## The input

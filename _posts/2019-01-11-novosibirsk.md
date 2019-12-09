@@ -3,8 +3,13 @@ layout: post
 title: "Microcorruption - Novosibirsk: Write-up"
 date: 2019-01-11 11:33:12.000000000 +08:00
 excerpt: A write-up on the solution for the microcorruption level Novosibirsk. The thought process behind the solution is also included. Many different solutions are explored including ways to acheive 8771 clock cycle and 5 byte input.
-tags: [microcorruption, solution, wargames]
+tags: 
+  - microcorruption
+  - solution
+  - wargames
 keywords: [microcorruption, addis ababa, solution, tip, answer, ctf, wargames, 8771, clock cycle, 5, input]
+category: 
+  - microcorruption
 ---
 
 ## The input

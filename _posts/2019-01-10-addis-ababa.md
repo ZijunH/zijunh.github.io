@@ -3,8 +3,13 @@ layout: post
 title: "Microcorruption - Addis Ababa: Write-up"
 date: 2019-01-10 17:15:03.000000000 +08:00
 excerpt: A write-up on the solution for the microcorruption level Addis Ababa. The thought process behind the solution is also included.
-tags: [microcorruption, solution, wargames]
+tags: 
+  - microcorruption
+  - solution
+  - wargames
 keywords: [microcorruption, addis ababa, solution, tip, answer, ctf, wargames]
+category: 
+  - microcorruption
 ---
 
 ## The input

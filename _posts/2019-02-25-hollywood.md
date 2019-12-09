@@ -3,8 +3,13 @@ layout: post
 title: "Microcorruption - Hollywood: Write-up"
 date: 2019-02-25 18:22:19.000000000 +8:00
 excerpt: A write-up on the solution for the microcorruption level Hollywood. The thought process behind the solution is also included. At the end a 5 byte solution with 3085563 CPU cycle time is achieved.
-tags: [microcorruption, solution, wargames]
+tags: 
+  - microcorruption
+  - solution
+  - wargames
 keywords: [microcorruption, hollywood, solution, tip, answer, ctf, wargames, 3085563, clock cycle, 5, input]
+category: 
+  - microcorruption
 ---
 
 ## Initial information

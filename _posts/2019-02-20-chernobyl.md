@@ -3,8 +3,13 @@ layout: post
 title: "Microcorruption - Chernobyl: Write-up"
 date: 2019-02-21 21:52:34.000000000 +8:00
 excerpt: A write-up on the solution for the microcorruption level Chernobyl. The thought process behind the solution is also included. At the end a 69 byte (nice) solution with 229009 CPU cycle time is achieved.
-tags: [microcorruption, solution, wargames]
+tags: 
+  - microcorruption
+  - solution
+  - wargame
 keywords: [microcorruption, chernobyl, solution, tip, answer, ctf, wargames, 229009, clock cycle, 69, input]
+category: 
+  - microcorruption
 ---
 
 Before discussing the solutions, I would like to say this question was a blast. I obtained the straight forward solution relatively quickly but shortening the input size took quite a lot of time. I attempted 4-5 different possible methods, but they were all a little off at the end, preventing me from successfully opening the lock. The complexity (and length) of the code warrants many ways of attacking the problem (as evident in the varying input length), making it the best challenge (so far). Though my input size is already quite small, someone has a 60 byte solution, meaning there are still ways to attack the problem that I haven't explored.

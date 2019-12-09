@@ -2,10 +2,11 @@
 title: Zijun Hui
 subtitle: Doing what I like
 welcome_message: Welcome to my world
-description: Random thoughts and random solutions for computer science
+description: Random thoughts and random solutions on computer science
 creator: <a href="https://github.com/ZijunH/">@ZijunH</a>
-
 url: "zijunh.github.io"
+
+plugins: [jekyll-paginate-v2]
 
 permalink: /:year/:month/:title/
 
@@ -16,19 +17,40 @@ highlighter: rouge
 cover_color: red
 
 # The blog button should not be removed.
-blog_button:
-    title: Blog
-    description: Visit blog
+
+pagination:
+  enabled: true
+  per_page: 10
+  permalink: '/page/:num/'
+  title: ':title - page :num'
+  limit: 0
+  sort_field: 'date'
+  sort_reverse: true
 
 # Navigation buttons in the front page.
+autopages:
+  enabled: true
+  tags: 
+    enabled: false
+  categories:
+    title: 'Posts in category ":cat"'
+    layouts:
+      - autopage_category.html
+    enabled: true
+  collections:
+    enabled: false
+
 nav:
-    # - {title: Projects, description: My Projects, url: 'http://project.onevcat.com'}
+    - {title: Categories, description: Categoies, url: '/categories.html#blog'}
     # - {title: Another Button, description: A button, url: 'http://example.com'}
 
-# Pagination
-plugins: [jekyll-paginate]
-paginate: 10
-paginate_path: "page/:num/"
+nav_new:
+    # - {title: Another Button, description: A button, url: 'http://example.com'}
+
+blog_button:
+    title: Home
+    description: Visit blog
+
 
 # Comment
 comment:
@@ -39,6 +61,7 @@ comment:
 social:
     github: ZijunH
     mail: allenhui1220@outlook.com
+    linkedin: a.com
 
 # Google Analytics
 ga:

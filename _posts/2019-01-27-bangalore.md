@@ -3,8 +3,13 @@ layout: post
 title: "Microcorruption - Bangalore: Write-up"
 date: 2019-01-27 11:47:11.000000000 +08:00
 excerpt: A write-up on the solution for the microcorruption level Bangalore. The thought process behind the solution is also included. At the end a 24 byte solution with 13676 CPU cycle time is achieved.
-tags: [microcorruption, solution, wargames]
+tags: 
+  - microcorruption
+  - solution
+  - wargames
 keywords: [microcorruption, bangalore, solution, tip, answer, ctf, wargames, 13676, clock cycle, 24, input]
+category: 
+  - microcorruption
 ---
 
 ## The input

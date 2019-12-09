@@ -3,8 +3,13 @@ layout: post
 title: "Exploit Education - Nebula: Write-up (Part 2)"
 date: 2019-06-25 21:44:38.000000000 +8:00
 excerpt: Write-ups for all the nebula challenges included in the VM created by exploit education. Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.
-tags: [exploit education, solution, nebula]
+tags: 
+  - exploit education
+  - solution
+  - nebula
 keywords: [exploit education, nebula, solution, tip, answer, ctf]
+category: 
+  - exploit education
 ---
 
 ## Introduction
@@ -334,3 +339,4 @@ getflag > /tmp/output
 
 `chmod` the script to allow execution. With that file, I was able to call the perl script with the username "\`/\*/AAA\`". As you can see, there are no spaces or lower case letters in the string, thus it will not be transformed. The backticks are required to allow execution of the inline bash before `egrep`. The string is converted to hexadecimal for URL purposes, resulting in "%60%2F%2A%2FAAA%60". The perl script is executed by `wget -O - "http://127.0.0.1:1616/index.cgi?username=%60%2F%2A%2FAAA%60"`. After this, inspect the file "/tmp/output", which should have the string "You have successfully executed getflag on a target account", indicating success.
 
+## Level17

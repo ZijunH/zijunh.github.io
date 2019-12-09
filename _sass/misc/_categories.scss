@@ -1,0 +1,18 @@
+.categories-title_divider {
+    width: 70%;
+    margin: 1em 0 1em 0;
+    border-top: 1px solid $gray-light;
+  }
+
+.categories-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: left;
+}
+
+.categories-link {
+    display: block;
+    font-size: 18px;
+    margin: 0 0 0.5em 0;
+}
