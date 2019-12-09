@@ -12,7 +12,7 @@ title: Categories
   {% for my_page in site.pages %}  
   <li>
       {% if my_page.title and my_page.autogen == nil and my_page.autopage != nil %}
-      <a class="categories-link" href="{{ my_page.url | relative_url }}/#blog">{{ my_page.title | escape }}</a>
+      <a class="categories-link" href="{{ my_page.url | relative_url }}#blog">{{ my_page.title | escape }}</a>
       {% endif %}
   </li>
   {% endfor %}
