@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Microcorruption - Novosibirsk: Write-up</title>
+  <meta name="description" content="A write-up on the solution for the microcorruption level Novosibirsk. The thought process behind the solution is also included. Many different solutions are ...">
+  <meta name="author" content="Zijun Hui">
+  <meta name="keywords" content="microcorruption, addis ababa, solution, tip, answer, ctf, wargames, 8771, clock cycle, 5, input">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Microcorruption - Novosibirsk: Write-up">
+  <meta name="twitter:description" content="A write-up on the solution for the microcorruption level Novosibirsk. The thought process behind the solution is also included. Many different solutions are ...">
+  <meta name="twitter:keywords" content="microcorruption, addis ababa, solution, tip, answer, ctf, wargames, 8771, clock cycle, 5, input">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Microcorruption - Novosibirsk: Write-up">
+  <meta property="og:description" content="A write-up on the solution for the microcorruption level Novosibirsk. The thought process behind the solution is also included. Many different solutions are ...">
+  <meta name="og:keywords" content="microcorruption, addis ababa, solution, tip, answer, ctf, wargames, 8771, clock cycle, 5, input">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
+  <link rel="canonical" href="http://localhost:4000/2019/01/novosibirsk/">
+  <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="http://localhost:4000/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+  
+</head>
+
+
+  <body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+    
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="Go to Zijun Hui's page" class="blog-button"><img src="/assets/images/avatar.jpg" width="80" alt="Zijun Hui logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="Link to homepage for Zijun Hui" class="blog-button">Zijun Hui</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">Doing what I like</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">Random thoughts and random solutions on computer science</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        <p class="panel-cover__description">Welcome to my world</p>
+        
+        
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="Visit blog" class="blog-button">Home</a></li>
+                
+                  <li class="navigation__item"><a href="/categories.html#blog" title="Categoies">Categories</a></li>
+                
+                
+              </ul>
+            </nav>
+          </div>
+          
+          <div><nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  
+
+  
+  <!-- Github -->
+  <li class="navigation__item">
+    <a href="https://github.com/ZijunH" title="@ZijunH 的 Github" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+  
+  
+  
+
+  
+
+  <!-- RSS -->
+  <li class="navigation__item">
+    <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+  
+  <!-- Email -->
+  <li class="navigation__item">
+    <a href="mailto:allenhui1220@outlook.com" title="Contact me">
+      <i class='social fa fa-envelope'></i>
+      <span class="label">Email</span>
+    </a>
+  </li>
+  
+
+  </ul>
+</nav>
+</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-red"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2019-01-11 14:33:12 +1100" itemprop="datePublished" class="post-meta__date date">2019-01-11</time> &#8226; <span class="post-meta__tags tags">microcorruption, solution, wargames</span>
+    </div>
+    <h1 class="post-title">Microcorruption - Novosibirsk: Write-up</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="the-input">The input</h2>
+
+<p>For this particular problem, the user can only input one string in the form of <code class="highlighter-rouge">username</code>.</p>
+
+<h2 id="the-exploit">The exploit</h2>
+
+<p>This problem uses the same technique as the previous problem, Addis Ababa. If you haven’t read the <a href="/2019/01/addis-ababa/">write-up</a> for that one, I strongly suggest you do so.</p>
+
+<p>There are many ways to tackle this problem. Observe the allowed input length for this problem is 0x1f4, hinting a long input string can be used for the exploit. As we know the memory will be changed after the <code class="highlighter-rouge">printf</code> function, we will focus on the code after the <code class="highlighter-rouge">printf</code> for the input.</p>
+
+<p>As you may remember in previous questions, providing a the <code class="highlighter-rouge">INT</code> function an argument of “0x7f” will open the door automatically, and fortunately, both <code class="highlighter-rouge">putchar</code> and <code class="highlighter-rouge">conditional_unlock_door</code> have calls to <code class="highlighter-rouge">INT</code>. This value is also less the the allowed input length of 0x1f4, making this attack viable.</p>
+
+<p>Arguments are usually passed to functions by pushing them onto the stack. The “push” instruction for <code class="highlighter-rouge">putchar</code> has no arguments and pushes the default value of 0x0, preventing plans to change the argument to 0x7f. <code class="highlighter-rouge">conditional_unlock_door</code>, however, includes a “push” with the argument 0x7e, and we are able to override this value to 0x7f by making the length of the printed string 0x7f.</p>
+
+<h2 id="the-first-solution">The (first) solution</h2>
+
+<p>This solution has 3 parts: the address to the argument of “push” in <code class="highlighter-rouge">conditional_unlock_door</code>, padding to make the printed portion of the string 0x7f long, %n to overwrite.</p>
+
+<p>For me the answer (hex) was:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>c8441111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111256e
+</code></pre></div></div>
+
+<h2 id="the-second-solution">The (second) solution</h2>
+
+<p>Naturally, I went to check the hall of fame to see how others were doing. To my suprise, I found the minimal input size was only <strong>5 bytes</strong>!! This prompted me to explore other possible solutions. When format string vulnerabilities were discovered, a common way to increase the string length was to use %<em>n</em>s, where <em>n</em> is a number. This pads the string, and increases the output size. However, it did not work when I tried (perhaps this is not a complete replication of the C <code class="highlighter-rouge">printf</code>)</p>
+
+<p>But when I was trying this method, I realised there was a large area of junk memory at the end of the dump, ranging from ff80 to fff0. In <code class="highlighter-rouge">printf</code>, %s reads a string starting from the position indicated by the argument until it reaches a null character \0, which is indicated by 0x0. This character is observed at fffe, and there are 0x7f bytes of non-null characters before it. Therefore we can direct <code class="highlighter-rouge">printf</code> to print these characters using %s, which prints out the junk memory, and uses it as padding.</p>
+
+<p>The solution has the following components: address of starting character in the junk memory that pads the total length of the printed string to 0x7f, the address to the argument of “push” in <code class="highlighter-rouge">conditional_unlock_door</code>, %s to read string, %n to overwrite.</p>
+
+<p>For me the answer (hex) was:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>83ffc8442573256e
+</code></pre></div></div>
+
+<p>This is only 8 bytes!</p>
+
+<h2 id="the-third-solution">The (third) solution</h2>
+
+<p>Though we are close, we are still 3 bytes and a lot of cpu cycles away from the best solution. To be fair, I was stuck here for a while. There is a brief discussion on reddit, which you can read <a href="https://www.reddit.com/r/securityCTF/comments/8726mt/microcorruption_novosibirsk_min_input_of_5/">here</a>. As there are fewer cpu cycles, changing the memory must have affected the program earlier. The only possible way to solve the challenge is to provide <code class="highlighter-rouge">INT</code> 0x7f. The only function that calls <code class="highlighter-rouge">INT</code> before <code class="highlighter-rouge">conditional_unlock_door</code> is <code class="highlighter-rouge">putchar</code>. By putting a breakpoint before the call to <code class="highlighter-rouge">INT</code>, we can see the stack pointer is only 2 bytes away from a character in user input.</p>
+
+<p><img src="/assets/images/pic1.png" alt="Stack pointer and memory location" />
+<em>Figure showing memory address location, @ is user input</em></p>
+
+<p>As %n can only write the length of printed characters, we are limited to writing 2 or 3 characters. Using the disassembler on the website, 0200 provides the instruction “rrc sr”, and 0300 provides “rrc #0x0”. Both are viable instructions that do not have big influences on the execution of <code class="highlighter-rouge">INT</code> (sr is overwritten by r15 in <code class="highlighter-rouge">INT</code>). Thus, we can overwrite one of the push instructions in <code class="highlighter-rouge">putchar</code>, and when <code class="highlighter-rouge">INT</code> is called, the stack pointer points to the character we entered after overwriting, and passes it as an argument to <code class="highlighter-rouge">INT</code>.</p>
+
+<p>This forms the basis of our solution: address pointing towards “push” in <code class="highlighter-rouge">putchar</code> before <code class="highlighter-rouge">INT</code>, %n to overwrite the insturction with “rrc”, and 7f, which will be passed as argument to <code class="highlighter-rouge">INT</code>.</p>
+
+<p>The solution is then the following (hex):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>5245256e7f
+</code></pre></div></div>
+
+<p>As we no longer need to wait for <code class="highlighter-rouge">printf</code> to finish, it uses less cycles and only requires 5 bytes of input.</p>
+
+<h2 id="read-more">Read More</h2>
+
+<p><a href="https://crypto.stanford.edu/cs155/papers/formatstring-1.2.pdf">Exploiting Format String Vulnerabilities</a></p>
+
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Recent posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/01/algiers/" title="link to Microcorruption - Algiers: Write-up">Microcorruption - Algiers: Write-up</a></h2>
+       <p class="excerpt">A write-up on the solution for the microcorruption level Algiers. The thought process behind the solution is also included. At the end a 20 byte solution with 7294 CPU cycle time is achieved.</p>
+       <div class="post-list__meta"><time datetime="2019-01-23 15:37:10 +1100" class="post-list__meta--date date">2019-01-23</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/01/algiers/>Continue...</a></div>
+   </div>
+   
+   
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Earlier posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/01/addis-ababa/" title="link to Microcorruption - Addis Ababa: Write-up">Microcorruption - Addis Ababa: Write-up</a></h2>
+       <p class="excerpt"></p>A write-up on the solution for the microcorruption level Addis Ababa. The thought process behind the solution is also included.</p>
+       <div class="post-list__meta"><time datetime="2019-01-10 20:15:03 +1100" class="post-list__meta--date date">2019-01-10</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/01/addis-ababa/>Continue...</a></div>
+   </div>
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "http://localhost:4000/2019/01/novosibirsk/";
+        this.page.identifier = "/2019/01/novosibirsk/";
+    };
+
+    var disqus_shortname = 'zijunh';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>To view<a href="http://disqus.com/?ref_noscript"> Disqus </a>Comments, please enable JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
+
+            <section class="footer">
+    <footer>
+    	<span class="footer__copyright">Created under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        <span class="footer__copyright">Generated by <a href="https://jekyllrb.com">Jekyll</a> at 2019-12-09. Many thanks to <a href="https://pages.github.com/">Github</a> for the hosting service</span>
+        <span class="footer__copyright">Created by <a href="https://github.com/ZijunH/">@ZijunH</a> using the <a href="https://github.com/onevcat/vno-jekyll">Vno - Jekyll</a> theme by @onevcat. Source code found on <a href="https://github.com/ZijunH/zijunh.github.io">github</a> - &copy; 2019</span>
+    </footer>
+</section>
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-132056744-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    
+  </body>
+
+</html>

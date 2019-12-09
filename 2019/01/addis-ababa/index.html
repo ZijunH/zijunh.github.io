@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Microcorruption - Addis Ababa: Write-up</title>
+  <meta name="description" content="A write-up on the solution for the microcorruption level Addis Ababa. The thought process behind the solution is also included.">
+  <meta name="author" content="Zijun Hui">
+  <meta name="keywords" content="microcorruption, addis ababa, solution, tip, answer, ctf, wargames">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Microcorruption - Addis Ababa: Write-up">
+  <meta name="twitter:description" content="A write-up on the solution for the microcorruption level Addis Ababa. The thought process behind the solution is also included.">
+  <meta name="twitter:keywords" content="microcorruption, addis ababa, solution, tip, answer, ctf, wargames">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Microcorruption - Addis Ababa: Write-up">
+  <meta property="og:description" content="A write-up on the solution for the microcorruption level Addis Ababa. The thought process behind the solution is also included.">
+  <meta name="og:keywords" content="microcorruption, addis ababa, solution, tip, answer, ctf, wargames">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
+
+  <link rel="canonical" href="http://localhost:4000/2019/01/addis-ababa/">
+  <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="http://localhost:4000/feed.xml">
+  
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+  
+</head>
+
+
+  <body>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+    
+    <header class="panel-cover panel-cover--collapsed" style="background-image: url('/assets/images/background-cover.jpg')">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="Go to Zijun Hui's page" class="blog-button"><img src="/assets/images/avatar.jpg" width="80" alt="Zijun Hui logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="Link to homepage for Zijun Hui" class="blog-button">Zijun Hui</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">Doing what I like</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">Random thoughts and random solutions on computer science</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+        
+        
+        <p class="panel-cover__description">Welcome to my world</p>
+        
+        
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="Visit blog" class="blog-button">Home</a></li>
+                
+                  <li class="navigation__item"><a href="/categories.html#blog" title="Categoies">Categories</a></li>
+                
+                
+              </ul>
+            </nav>
+          </div>
+          
+          <div><nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  
+
+  
+  <!-- Github -->
+  <li class="navigation__item">
+    <a href="https://github.com/ZijunH" title="@ZijunH 的 Github" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+  
+  
+  
+
+  
+
+  <!-- RSS -->
+  <li class="navigation__item">
+    <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+  
+  <!-- Email -->
+  <li class="navigation__item">
+    <a href="mailto:allenhui1220@outlook.com" title="Contact me">
+      <i class='social fa fa-envelope'></i>
+      <span class="label">Email</span>
+    </a>
+  </li>
+  
+
+  </ul>
+</nav>
+</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="panel-cover--overlay cover-red"></div>
+    
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2019-01-10 20:15:03 +1100" itemprop="datePublished" class="post-meta__date date">2019-01-10</time> &#8226; <span class="post-meta__tags tags">microcorruption, solution, wargames</span>
+    </div>
+    <h1 class="post-title">Microcorruption - Addis Ababa: Write-up</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="the-input">The input</h2>
+
+<p>For this particular problem, the user can only input one string in the form of <code class="highlighter-rouge">username:password</code>.</p>
+
+<h2 id="the-exploit">The exploit</h2>
+
+<p>In the manual, it is hinted that “Usernames are printed back to the user for verification”, suggested the attack origin is from the output function. The function name <code class="highlighter-rouge">printf</code> should also ring some bells. Both of these points the attack method towards <a href="https://en.wikipedia.org/wiki/Uncontrolled_format_string">uncontrolled format string attacks</a>.</p>
+
+<p>However, without meta knowledge on what type of exploit we may use, this is not so obvious due to the many jumps and conditions in the <code class="highlighter-rouge">printf</code> function. We are still able to eliminate the possibility of an overflow attack by observing the arguments passed in the <code class="highlighter-rouge">getsn</code> function. Only 0x13 characters will be registered from the input, which is too short for overflows.</p>
+
+<p>With a rudimentary idea of the attack, we can explore the different targets. As format string attacks often rely on <code class="highlighter-rouge">%n</code> to write to a memory address, we need to decide where and what to write. As there is no <code class="highlighter-rouge">ret</code> at the end of the <code class="highlighter-rouge">main</code> function, we cannot redirect the return address to the <code class="highlighter-rouge">unlock_door</code> function nor perform arbitrary code execution.</p>
+
+<p>At the bottom of the <code class="highlighter-rouge">main</code> function, it is observed that the program tests whether the value stored at <code class="highlighter-rouge">0x0(sp)</code> is 0 or not. If it is, the code is directed to the “invalid” part and an error message printed; if it is not, the door is unlocked. We need to change the value to a non-zero one to bypass it.</p>
+
+<p>Uncontrolled format string attacks rely on the function not knowing the number of arguments. It can only guess by the number of “%” arguments. As arguments are nothing but numbers on the stack, the pointer for the arguments may overlap with the input string, if they are stored in proximity. In this challenge, this is the case.</p>
+
+<h2 id="the-solution">The solution</h2>
+
+<p>The start of the argument pointer is 2 bytes away from the input string, so a read will be performed to move the pointer to the start of the string by %x. Then we want to change the value stored at <code class="highlighter-rouge">0x0(sp)</code>. This is a fixed location and can be found in a debug session. The change is performed using “%n”, which writes the number of bytes printed by printf to the memory address provided by the argument. As the argument is now the start of the string, we can just provide the required memory address at the start.</p>
+
+<p>The final solution should have the following format:</p>
+
+<p>&lt;–2 byte address–&gt;%x%n</p>
+
+<p>In my case, it is &lt;&gt;%x%n.</p>
+
+<h2 id="read-more">Read More</h2>
+
+<p><a href="https://crypto.stanford.edu/cs155/papers/formatstring-1.2.pdf">Exploiting Format String Vulnerabilities</a></p>
+
+  </section>
+</article>
+
+<section class="read-more">
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Recent posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/01/novosibirsk/" title="link to Microcorruption - Novosibirsk: Write-up">Microcorruption - Novosibirsk: Write-up</a></h2>
+       <p class="excerpt">A write-up on the solution for the microcorruption level Novosibirsk. The thought process behind the solution is also included. Many different solutions are explored including ways to acheive 8771 clock cycle and 5 byte input.</p>
+       <div class="post-list__meta"><time datetime="2019-01-11 14:33:12 +1100" class="post-list__meta--date date">2019-01-11</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/01/novosibirsk/>Continue...</a></div>
+   </div>
+   
+   
+   
+   
+   <div class="read-more-item">
+       <span class="read-more-item-dim">Earlier posts</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/01/jakarta/" title="link to Microcorruption - Jakarta: Write-up">Microcorruption - Jakarta: Write-up</a></h2>
+       <p class="excerpt"></p>A write-up on the solution for the microcorruption level Jakarta. The thought process behind the solution is also included.</p>
+       <div class="post-list__meta"><time datetime="2019-01-09 16:00:17 +1100" class="post-list__meta--date date">2019-01-09</time> &#8226; <span class="post-list__meta--tags tags">microcorruption, solution, wargames</span>
+       </br></br>
+        <a class="btn-border-small" href=/2019/01/jakarta/>Continue...</a></div>
+   </div>
+   
+</section>
+
+<section class="post-comments">
+  
+    <div id="disqus_thread"></div>
+    <script>
+    
+    var disqus_config = function () {
+        this.page.url = "http://localhost:4000/2019/01/addis-ababa/";
+        this.page.identifier = "/2019/01/addis-ababa/";
+    };
+
+    var disqus_shortname = 'zijunh';
+    
+    (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>To view<a href="http://disqus.com/?ref_noscript"> Disqus </a>Comments, please enable JavaScript</noscript>
+    
+  
+  
+  
+  
+</section>
+
+
+            <section class="footer">
+    <footer>
+    	<span class="footer__copyright">Created under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        <span class="footer__copyright">Generated by <a href="https://jekyllrb.com">Jekyll</a> at 2019-12-09. Many thanks to <a href="https://pages.github.com/">Github</a> for the hosting service</span>
+        <span class="footer__copyright">Created by <a href="https://github.com/ZijunH/">@ZijunH</a> using the <a href="https://github.com/onevcat/vno-jekyll">Vno - Jekyll</a> theme by @onevcat. Source code found on <a href="https://github.com/ZijunH/zijunh.github.io">github</a> - &copy; 2019</span>
+    </footer>
+</section>
+
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-132056744-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    
+  </body>
+
+</html>
