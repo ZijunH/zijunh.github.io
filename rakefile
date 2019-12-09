@@ -1,0 +1,15 @@
+GH_PAGES_DIR = "site"
+
+desc "Build Jekyll site"
+task :build do
+  system "bundle exec jekyll build"
+  system "git add -A"
+  system "git commit -m \"source update\""
+  system "git push origin sources"
+  Dir.chdir(GH_PAGES_DIR) do
+  system "touch .nojekyll"
+  system "git add -A"
+  system "git commit -m \"build update\""
+  system "git push origin master"
+  end
+end
