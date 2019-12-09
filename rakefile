@@ -6,6 +6,9 @@ task :build do
   system "git add -A"
   system "git commit -m \"source update\""
   system "git push origin sources"
-  system "cd #{GH_PAGES_DIR}"
-  system "pwd"
+  Dir.chdir(GH_PAGES_DIR) do
+  system "touch .nojekyll"
+  system "git commit -m \"build update\""
+  system "git push origin master"
+  end
 end
