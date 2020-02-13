@@ -5,8 +5,8 @@
     <description>Random thoughts and random solutions on computer science</description>
     <link>zijunh.github.io/</link>
     <atom:link href="zijunh.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 06 Jan 2020 21:34:10 +1100</pubDate>
-    <lastBuildDate>Mon, 06 Jan 2020 21:34:10 +1100</lastBuildDate>
+    <pubDate>Thu, 13 Feb 2020 15:18:49 +1100</pubDate>
+    <lastBuildDate>Thu, 13 Feb 2020 15:18:49 +1100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
@@ -399,6 +399,50 @@ exit_group(11)                          = ?
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Run the above code using &lt;code class=&quot;highlighter-rouge&quot;&gt;python2&lt;/code&gt;, and check the contents of the file “/tmp/t.txt”. It should contain the desired output, indicating this level is solved.&lt;/p&gt;
+
+&lt;h2 id=&quot;level18&quot;&gt;Level18&lt;/h2&gt;
+
+&lt;p&gt;This is what I believe to be the hardest level so far. Looking at the source code, we can notice it is coded quite defensively. All but one string comparisons are length guarded, and the remaining one cannot be abused.&lt;/p&gt;
+
+&lt;p&gt;One potential exploit is the format string exploit in &lt;code class=&quot;highlighter-rouge&quot;&gt;notsupported&lt;/code&gt;, where the string &lt;code class=&quot;highlighter-rouge&quot;&gt;what&lt;/code&gt; is printed directly in line 48. Checking the protections on the executable, it appears &lt;code class=&quot;highlighter-rouge&quot;&gt;FORTIFY_SOURCE&lt;/code&gt; has been enabled. This prevents directly overwriting the &lt;code class=&quot;highlighter-rouge&quot;&gt;globals.loggedin&lt;/code&gt; variable. During my research, I did discover an interesting paper on &lt;a href=&quot;http://phrack.org/issues/67/9.html&quot;&gt;bypassing such protection&lt;/a&gt;. However, it was too complicated so I went digging for an easier attack.&lt;/p&gt;
+
+&lt;p&gt;A more careful read of the code reveals the program successfully logs in even when the “PWFILE” cannot be read. This reminded me of &lt;a href=&quot;https://en.wikipedia.org/wiki/Resource_exhaustion_attack&quot;&gt;resource exhaustion attacks&lt;/a&gt;, where the software will no longer open more files when the total number of file descriptors allocated to the program has been exhausted. This can be done on a system level (exhausting all files that can be opened by the operating system) or a process level (exhausting all files that can be opened by the process). I feel like the former method is too barbaric, thus I decided to use the latter. The latter limit can be checked with &lt;code class=&quot;highlighter-rouge&quot;&gt;ulimit -n&lt;/code&gt;, which reveals the maximum number of file descriptors allowed is 1024. Subtracting the 3 default ones (stdin, stdout, stderr), we needed to open 1021 files.&lt;/p&gt;
+
+&lt;p&gt;When actually running the program, one may notice no output is produced as everything is written to a log file. This can be circumvented by setting the log file to “/dev/tty”, which is the terminal. This way, a more clear output can be obtained.&lt;/p&gt;
+
+&lt;p&gt;Looking at the decompiled source code, one may see that that the &lt;code class=&quot;highlighter-rouge&quot;&gt;globals.debugfile&lt;/code&gt; is never closed when it is replaced by another one. This provides the foundation for the exploit. A python program was used to generate a file looking like the following, with “-d /dev/tty” repeated 1021 times:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/home/flag18/flag18 &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /dev/tty &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /dev/tty ... &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /dev/tty
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Running the this bash script, we can then use “login pw” to login and “shell” to obtain our shell. Fortunately, the first stage passes, we can login. However, when starting the shell process, the error “/home/flag18/flag18: error while loading shared libraries: libncurses.so.5: cannot open shared object file: Error 24” is obtained. This indicates we need to release a file descriptor. The easiest way is to use “closelog” to close the logger after loggin in.&lt;/p&gt;
+
+&lt;p&gt;However, this reveals a new problem: “/home/flag18/flag18: -d: invalid option”. This is caused by the same arguments of /home/flag18/flag18 being passed to /bin/bash. To prevent this, we can add a “–rcfile” option as one of the long options. The new script thus becomes:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/home/flag18/flag18 &lt;span class=&quot;nt&quot;&gt;--rcfile&lt;/span&gt; /tmp/t &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /dev/tty &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /dev/tty ... &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; /dev/tty
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Running the commands described previously now works flawlessly. A bash shell has been opened and typing getflag reveals we have successfully completed this level.&lt;/p&gt;
+
+&lt;h2 id=&quot;level19&quot;&gt;Level19&lt;/h2&gt;
+
+&lt;p&gt;The source code for this program is relatively simple. The program checks the id of the parent process, and if it is root, then we obtain a privileged shell. This immediately reminded me &lt;a href=&quot;https://en.wikipedia.org/wiki/Orphan_process&quot;&gt;orphaned child process&lt;/a&gt;, which are created when the parent process dies before the child. In this case, the child is automatically attached to the “init” process, which is root. This sets up the basic premise of the attack. A PoC can be created by the following C code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-C&quot;&gt;#include &amp;lt;unistd.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+
+int main(){
+    if (fork() == 0){
+        sleep(1);
+        execl(&quot;/home/flag19/flag19&quot;, &quot;/bin/sh&quot;, &quot;-c&quot;, &quot;getflag&amp;gt;/tmp/o&quot;, NULL);
+    }else{
+        return 0;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After compiling and running the code, the output can be checked at “tmp/o”. Unsuprisingly, it contains the message “You have successfully executed getflag on a target account”.&lt;/p&gt;
+
 </description>
         <pubDate>Tue, 25 Jun 2019 23:44:38 +1000</pubDate>
         <link>zijunh.github.io/2019/06/nebulla-part-2/</link>
