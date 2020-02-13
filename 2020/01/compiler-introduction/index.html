@@ -6,20 +6,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>aria2 assisted downloading in China</title>
-  <meta name="description" content="Using aria2 to increase downloading speeds in China.">
+  <title>Compiler in Rust - Introduction</title>
+  <meta name="description" content="Journey of writing a complete compiler in Rust without external infrastructure.">
   <meta name="author" content="Zijun Hui">
-  <meta name="keywords" content="aria2, downloading, china, discussion, fast">
+  <meta name="keywords" content="compiler, rust, project">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="aria2 assisted downloading in China">
-  <meta name="twitter:description" content="Using aria2 to increase downloading speeds in China.">
-  <meta name="twitter:keywords" content="aria2, downloading, china, discussion, fast">
+  <meta name="twitter:title" content="Compiler in Rust - Introduction">
+  <meta name="twitter:description" content="Journey of writing a complete compiler in Rust without external infrastructure.">
+  <meta name="twitter:keywords" content="compiler, rust, project">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="aria2 assisted downloading in China">
-  <meta property="og:description" content="Using aria2 to increase downloading speeds in China.">
-  <meta name="og:keywords" content="aria2, downloading, china, discussion, fast">
+  <meta property="og:title" content="Compiler in Rust - Introduction">
+  <meta property="og:description" content="Journey of writing a complete compiler in Rust without external infrastructure.">
+  <meta name="og:keywords" content="compiler, rust, project">
 
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
   <link href="/assets/images/favicon.png" rel="shortcut icon" type="image/png">
@@ -28,7 +28,7 @@
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> 
 
-  <link rel="canonical" href="zijunh.github.io/2019/12/china-download/">
+  <link rel="canonical" href="zijunh.github.io/2020/01/compiler-introduction/">
   <link rel="alternate" type="application/rss+xml" title="Zijun Hui" href="zijunh.github.io/feed.xml">
   
   <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
@@ -130,22 +130,48 @@
             <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
     <div class="post-meta">
-      <time datetime="2019-12-18 20:31:24 +1100" itemprop="datePublished" class="post-meta__date date">2019-12-18</time> &#8226; <span class="post-meta__tags tags">discussion</span>
+      <time datetime="2020-01-13 18:12:54 +1100" itemprop="datePublished" class="post-meta__date date">2020-01-13</time> &#8226; <span class="post-meta__tags tags">discussion, compiler</span>
     </div>
-    <h1 class="post-title">aria2 assisted downloading in China</h1>
+    <h1 class="post-title">Compiler in Rust - Introduction</h1>
   </header>
 
   <section class="post">
-    <p>Those who have been to China are often frustrated by the restrictions imposed by the Great Fire Wall of China (GFW). Even though VPNs are available to bypass the restrictions, they are often very slow or unstable. However, even for foreign websites that are not blocked by the GFW, accessing them is extremely slow. This becomes extremely problematic when you need to download large files, such as software updates or other essential files. The slow speed of software updates can be remedied by changing mirror sites to those local to China. However, the file I needed was only hosted on 1 website. The speeds were painstakingly slow (often ~90kb/s), it would take hours to download a 1GB file, even when I have a bandwidth of 100MBps.</p>
+    <h2 id="introduction">Introduction</h2>
 
-<p>To solve this problem, the idea of parallel downloading can be introduced. <a href="https://github.com/aria2/aria2">aria2</a> is such a tool. It allows connection to single or multiple hosts from the same machine. This allows multiple connections to the same host to increase the download speed. Each connection downloads a chunk, and when a chunk is downloaded, a new connection is made to download the next chunk. “-s” specifies the number of connections to the hosts, “-k” specifies the size of each chunk, and “-x” specifies the maximum number of connections. The full documentation is <a href="https://aria2.github.io/manual/en/html/">here</a>.</p>
+<p>Once a professor told me every university student need to do three things before they graduate: write a compiler, write an OS, write a GPU rendering engine. So I decided to start with the compiler, since it appears to be the easiest. Since I have no experience in software projects, Rust, or compilers pipelines, I want to do all 3 at the same time. It seems pretty easy, what can go wrong?</p>
 
-<p>The arguments I used were:</p>
+<h2 id="goal">Goal</h2>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aria2c.exe -x16 -s16 -k1M link
-</code></pre></div></div>
+<p>The goal I have in my head is a full compiler without any additional infrastructure. This mean no LLVM, no flex, no Yacc and I need to write a program that completes the process from human-readable code to machine code. This will mainly be a learning excercise, so don’t expect this to be bug-free or fully featured. For each component, I hope it will be as generic as possible, which means I should be able to change a lot of things through a simple config file. Speed will not be a high priority; however, I will aim to implement the most efficient algorithms (or perhaps the most complex ones since this is an excercise) that I can find.</p>
 
-<p>Note this method requires manually downloading the file. Perhaps manual interference can be omitted by writing a local proxy that automatically does this. However, I am not a network expert so this will be a task for the readers (or when I do become a network expert).</p>
+<p>After this project is completed I hope the final product has the following stages:</p>
+
+<ul>
+  <li>Front end
+    <ul>
+      <li>A lexer that tokenises the text</li>
+      <li>A parser that parses the tokens into rules</li>
+      <li>Intermediate code generator that generates the rules into intermediate code</li>
+    </ul>
+  </li>
+  <li>Back end
+    <ul>
+      <li>Code optimiser that optimises the intermediate code</li>
+      <li>The actual compiler that converts intermediate code into assembly</li>
+      <li>Assembler that converts assembly into machine code</li>
+    </ul>
+  </li>
+</ul>
+
+<p>In order to complete this, I will be using the book “<a href="https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools">Compilers: Principles, Techniques, and Tools</a>”. From my understanding, this book is quite theoretical. Though this may increase the development time and probability of bugs, I believe it will make this project a great learning excercise.</p>
+
+<p>The langauge that I will be compiling is <a href="http://c0.typesafety.net/tutorial/">CMU’s C0</a>. Its full specifications can be found <a href="http://c0.typesafety.net/doc/c0-reference.pdf">here</a>. This was chosen because it is a subset of C, which means in the future I can expand this project into a compiler for C. Furthermore, it is relatively small and simple, which should allow me to get a prototype out pretty fast.</p>
+
+<p>The time I expect this will take is around 6 months of coding. I have already spent 2 months reading through the compilers book, which provided me with a lot of theory and an idea of what to do. As this time period also coincides with the start of the 1st semester of my final year of undergrad, I may or may not finish within my planned timeframe.</p>
+
+<p>I plan to record my journey throughout this project. As this is written in Rust, which I am very unfamiliar with, I will probably complain a lot about it as well.</p>
+
+<p>Viel Glück!</p>
 
   </section>
 </article>
@@ -153,25 +179,15 @@
 <section class="read-more">
    
    
-   <div class="read-more-item">
-       <span class="read-more-item-dim">Recent posts</span>
-       <h2 class="post-list__post-title post-title"><a href="/2020/01/compiler-introduction/" title="link to Compiler in Rust - Introduction">Compiler in Rust - Introduction</a></h2>
-       <p class="excerpt">Journey of writing a complete compiler in Rust without external infrastructure.</p>
-       <div class="post-list__meta"><time datetime="2020-01-13 18:12:54 +1100" class="post-list__meta--date date">2020-01-13</time> &#8226; <span class="post-list__meta--tags tags">discussion, compiler</span>
-       </br></br>
-        <a class="btn-border-small" href=/2020/01/compiler-introduction/>Continue...</a></div>
-   </div>
-   
-   
    
    
    <div class="read-more-item">
        <span class="read-more-item-dim">Earlier posts</span>
-       <h2 class="post-list__post-title post-title"><a href="/2019/08/tle/" title="link to TLE and memset in competitive programming">TLE and memset in competitive programming</a></h2>
-       <p class="excerpt">An interesting phenomenon observed for the time required for memset in competitive programming.</p>
-       <div class="post-list__meta"><time datetime="2019-08-20 23:50:12 +1000" class="post-list__meta--date date">2019-08-20</time> &#8226; <span class="post-list__meta--tags tags">competitive programming, discussion, optimisation</span>
+       <h2 class="post-list__post-title post-title"><a href="/2019/12/china-download/" title="link to aria2 assisted downloading in China">aria2 assisted downloading in China</a></h2>
+       <p class="excerpt">Using aria2 to increase downloading speeds in China.</p>
+       <div class="post-list__meta"><time datetime="2019-12-18 20:31:24 +1100" class="post-list__meta--date date">2019-12-18</time> &#8226; <span class="post-list__meta--tags tags">discussion</span>
        </br></br>
-        <a class="btn-border-small" href=/2019/08/tle/>Continue...</a></div>
+        <a class="btn-border-small" href=/2019/12/china-download/>Continue...</a></div>
    </div>
    
 </section>
@@ -182,8 +198,8 @@
     <script>
     
     var disqus_config = function () {
-        this.page.url = "zijunh.github.io/2019/12/china-download/";
-        this.page.identifier = "/2019/12/china-download/";
+        this.page.url = "zijunh.github.io/2020/01/compiler-introduction/";
+        this.page.identifier = "/2020/01/compiler-introduction/";
     };
 
     var disqus_shortname = 'zijunh';

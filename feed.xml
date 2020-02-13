@@ -5,9 +5,61 @@
     <description>Random thoughts and random solutions on computer science</description>
     <link>zijunh.github.io/</link>
     <atom:link href="zijunh.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 13 Feb 2020 15:21:46 +1100</pubDate>
-    <lastBuildDate>Thu, 13 Feb 2020 15:21:46 +1100</lastBuildDate>
+    <pubDate>Thu, 13 Feb 2020 15:54:07 +1100</pubDate>
+    <lastBuildDate>Thu, 13 Feb 2020 15:54:07 +1100</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>Compiler in Rust - Introduction</title>
+        <description>&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;Once a professor told me every university student need to do three things before they graduate: write a compiler, write an OS, write a GPU rendering engine. So I decided to start with the compiler, since it appears to be the easiest. Since I have no experience in software projects, Rust, or compilers pipelines, I want to do all 3 at the same time. It seems pretty easy, what can go wrong?&lt;/p&gt;
+
+&lt;h2 id=&quot;goal&quot;&gt;Goal&lt;/h2&gt;
+
+&lt;p&gt;The goal I have in my head is a full compiler without any additional infrastructure. This mean no LLVM, no flex, no Yacc and I need to write a program that completes the process from human-readable code to machine code. This will mainly be a learning excercise, so don’t expect this to be bug-free or fully featured. For each component, I hope it will be as generic as possible, which means I should be able to change a lot of things through a simple config file. Speed will not be a high priority; however, I will aim to implement the most efficient algorithms (or perhaps the most complex ones since this is an excercise) that I can find.&lt;/p&gt;
+
+&lt;p&gt;After this project is completed I hope the final product has the following stages:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Front end
+    &lt;ul&gt;
+      &lt;li&gt;A lexer that tokenises the text&lt;/li&gt;
+      &lt;li&gt;A parser that parses the tokens into rules&lt;/li&gt;
+      &lt;li&gt;Intermediate code generator that generates the rules into intermediate code&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Back end
+    &lt;ul&gt;
+      &lt;li&gt;Code optimiser that optimises the intermediate code&lt;/li&gt;
+      &lt;li&gt;The actual compiler that converts intermediate code into assembly&lt;/li&gt;
+      &lt;li&gt;Assembler that converts assembly into machine code&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In order to complete this, I will be using the book “&lt;a href=&quot;https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools&quot;&gt;Compilers: Principles, Techniques, and Tools&lt;/a&gt;”. From my understanding, this book is quite theoretical. Though this may increase the development time and probability of bugs, I believe it will make this project a great learning excercise.&lt;/p&gt;
+
+&lt;p&gt;The langauge that I will be compiling is &lt;a href=&quot;http://c0.typesafety.net/tutorial/&quot;&gt;CMU’s C0&lt;/a&gt;. Its full specifications can be found &lt;a href=&quot;http://c0.typesafety.net/doc/c0-reference.pdf&quot;&gt;here&lt;/a&gt;. This was chosen because it is a subset of C, which means in the future I can expand this project into a compiler for C. Furthermore, it is relatively small and simple, which should allow me to get a prototype out pretty fast.&lt;/p&gt;
+
+&lt;p&gt;The time I expect this will take is around 6 months of coding. I have already spent 2 months reading through the compilers book, which provided me with a lot of theory and an idea of what to do. As this time period also coincides with the start of the 1st semester of my final year of undergrad, I may or may not finish within my planned timeframe.&lt;/p&gt;
+
+&lt;p&gt;I plan to record my journey throughout this project. As this is written in Rust, which I am very unfamiliar with, I will probably complain a lot about it as well.&lt;/p&gt;
+
+&lt;p&gt;Viel Glück!&lt;/p&gt;
+</description>
+        <pubDate>Mon, 13 Jan 2020 18:12:54 +1100</pubDate>
+        <link>zijunh.github.io/2020/01/compiler-introduction/</link>
+        <guid isPermaLink="true">zijunh.github.io/2020/01/compiler-introduction/</guid>
+        
+        <category>discussion</category>
+        
+        <category>compiler</category>
+        
+        
+        <category>compiler</category>
+        
+      </item>
     
       <item>
         <title>aria2 assisted downloading in China</title>
@@ -1585,87 +1637,6 @@ call	#0x10
         <pubDate>Thu, 24 Jan 2019 14:16:29 +1100</pubDate>
         <link>zijunh.github.io/2019/01/vladivostok/</link>
         <guid isPermaLink="true">zijunh.github.io/2019/01/vladivostok/</guid>
-        
-        <category>microcorruption</category>
-        
-        <category>solution</category>
-        
-        <category>wargames</category>
-        
-        
-        <category>microcorruption</category>
-        
-      </item>
-    
-      <item>
-        <title>Microcorruption - Algiers: Write-up</title>
-        <description>&lt;h2 id=&quot;the-input&quot;&gt;The input&lt;/h2&gt;
-
-&lt;p&gt;For this particular problem, the user can only input two string in the form of &lt;code class=&quot;highlighter-rouge&quot;&gt;username&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt;. The maximum accepted length is 0x30 bytes.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-exploit&quot;&gt;The exploit&lt;/h2&gt;
-
-&lt;p&gt;Looking at the names of the functions, we immediately see &lt;code class=&quot;highlighter-rouge&quot;&gt;malloc&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt;. Both functions are commonly used to allocate memory on the heap. This gives a vague idea that the exploitation will be heap related. &lt;code class=&quot;highlighter-rouge&quot;&gt;malloc&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; are both called twice, once for &lt;code class=&quot;highlighter-rouge&quot;&gt;username&lt;/code&gt; and once for &lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt;. &lt;code class=&quot;highlighter-rouge&quot;&gt;malloc&lt;/code&gt; is called before user input, and &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; is called just before the program finishes, suggesting &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; is going to be the target of the exploitation.&lt;/p&gt;
-
-&lt;p&gt;In this example, heap is implemented as a linked list, and each element has the following structure. The header is the same for both freed and in use memory. This implementation is similar to that of &lt;code class=&quot;highlighter-rouge&quot;&gt;glibc&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;element&amp;gt;
-    &amp;lt;6 byte header&amp;gt;
-        &amp;lt;2 byte pointer to the previous block&amp;gt;
-        &amp;lt;2 byte pointer to the next block&amp;gt;
-        &amp;lt;2 byte size, with the least significant bit being indicating IN_USE&amp;gt;
-    &amp;lt;content&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;For both &lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;username&lt;/code&gt;, the size of &lt;code class=&quot;highlighter-rouge&quot;&gt;content&lt;/code&gt; is only 0x10, which is smaller than the allowed input size of 0x30. As both blocks are allocated next to each other, with &lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt; being directly after &lt;code class=&quot;highlighter-rouge&quot;&gt;username&lt;/code&gt;, the heap can be overflowed to overwrite the header for &lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt;. Furthermore, &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; is conveniently called on &lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt; first (the second input), allowing the overwritten header to be used immediately.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; function vaguely resembles the following code:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;r15 = &amp;amp;freeing chunk
-r13 = r15.size
-r14 = r15.prev
-r12 = r14.size
-if (!r14.IN_USE){
-    r12 += 6
-    r12 += r13 
-    r14.size = r12
-    r14.next = r15.next
-    r13 = r15.next
-    r13.prev = r14
-    r15 = r15.prev
-}
-r14 = r15.next
-r13 = r14.size 
-if (!r14.IN_USE){
-    r13 += r15.size
-    r13 += 6
-    r15.size = r13
-    r14.next = r15.next
-    r14.prev = r15
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We aim to overwrite the return pointer (at 0x4394) of &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; to direct it to our desired location and execute custom code. This can be done by utilising the line &lt;code class=&quot;highlighter-rouge&quot;&gt;r13.prev = r14&lt;/code&gt;, where &lt;code class=&quot;highlighter-rouge&quot;&gt;r13 = r15.next&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r14 = r15.prev&lt;/code&gt;. Thus we can use &lt;code class=&quot;highlighter-rouge&quot;&gt;r15.prev&lt;/code&gt; as the pointer to the custom code and &lt;code class=&quot;highlighter-rouge&quot;&gt;r15.next&lt;/code&gt; as the position to be overwritten (the return pointer). However, it is important to note that the first 6 bytes after &lt;code class=&quot;highlighter-rouge&quot;&gt;prev&lt;/code&gt; will be changed later in the code as it is treated as a header for a chunk, so a 6 byte padding is required before out custom code. Though that header will be treated as code and executed, it is not important as it is likely it will have not severe effect.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-solution&quot;&gt;The solution&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;password&lt;/code&gt; is left blank and the &lt;code class=&quot;highlighter-rouge&quot;&gt;username&lt;/code&gt; has the following structure:&lt;/p&gt;
-
-&lt;p&gt;&amp;lt;–8 byte padding–&amp;gt;
-&amp;lt;–8 byte payload–&amp;gt;
-&amp;lt;–2 byte input address–&amp;gt;
-&amp;lt;–2 byte return address–&amp;gt;&lt;/p&gt;
-
-&lt;p&gt;and the following solution:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aaaaaaaaaaaaaaaa30127f00b012b6460e249443
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;8 bytes of padding is required, because when &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; is used, a 4 byte instruction will appear.&lt;/p&gt;
-</description>
-        <pubDate>Wed, 23 Jan 2019 15:37:10 +1100</pubDate>
-        <link>zijunh.github.io/2019/01/algiers/</link>
-        <guid isPermaLink="true">zijunh.github.io/2019/01/algiers/</guid>
         
         <category>microcorruption</category>
         
