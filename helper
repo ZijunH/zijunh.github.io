@@ -12,7 +12,7 @@ Depending if you deal with a User/Organization (UO) site or a Project site (P), 
 8. git add -A
 9. git commit -m "jekyll base sources" commit your source code
 10. git push origin sources (UO) or git push origin master (P) push your sources in the appropriate branch
-11.cd _site
+11. cd _site
 12. touch .nojekyll, this file tells gh-pages that there is no need to build
 13. git init init the repository
 14. git remote add origin git@github.com:userName/userName.github.io.git (UO) or git remote add origin git@github.com:userName/repositoryName.git (P)
