@@ -16,7 +16,7 @@
    <div class="read-more-item">
        <span class="read-more-item-dim">Earlier posts</span>
        <h2 class="post-list__post-title post-title"><a href="{{ current.url }}" title="link to {{ current.title }}">{{ current.title }}</a></h2>
-       <p class="excerpt"></p>{% if current.excerpt %}{{ current.excerpt | strip_html | strip_newlines | truncate: 250 }}{% else %}{{ current.content | strip_html | strip_newlines | truncate: 250 }}{% endif %}</p>
+       <p class="excerpt">{% if current.excerpt %}{{ current.excerpt | strip_html | strip_newlines | truncate: 250 }}{% else %}{{ current.content | strip_html | strip_newlines | truncate: 250 }}{% endif %}</p>
        <div class="post-list__meta"><time datetime="{{current.date | date: date_to_xmlschema}}" class="post-list__meta--date date">{{current.date | date: "%F"}}</time> &#8226; <span class="post-list__meta--tags tags">{{current.tags | join:', '}}</span>
        </br></br>
         <a class="btn-border-small" href={{current.url}}>Continue...</a></div>
