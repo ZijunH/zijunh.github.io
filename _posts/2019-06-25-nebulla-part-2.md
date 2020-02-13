@@ -361,3 +361,50 @@ skt.send(pickle.dumps(p()))
 ```
 
 Run the above code using `python2`, and check the contents of the file "/tmp/t.txt". It should contain the desired output, indicating this level is solved.
+
+## Level18
+
+This is what I believe to be the hardest level so far. Looking at the source code, we can notice it is coded quite defensively. All but one string comparisons are length guarded, and the remaining one cannot be abused. 
+
+One potential exploit is the format string exploit in `notsupported`, where the string `what` is printed directly in line 48. Checking the protections on the executable, it appears `FORTIFY_SOURCE` has been enabled. This prevents directly overwriting the `globals.loggedin` variable. During my research, I did discover an interesting paper on [bypassing such protection](http://phrack.org/issues/67/9.html). However, it was too complicated so I went digging for an easier attack.
+
+A more careful read of the code reveals the program successfully logs in even when the "PWFILE" cannot be read. This reminded me of [resource exhaustion attacks](https://en.wikipedia.org/wiki/Resource_exhaustion_attack), where the software will no longer open more files when the total number of file descriptors allocated to the program has been exhausted. This can be done on a system level (exhausting all files that can be opened by the operating system) or a process level (exhausting all files that can be opened by the process). I feel like the former method is too barbaric, thus I decided to use the latter. The latter limit can be checked with `ulimit -n`, which reveals the maximum number of file descriptors allowed is 1024. Subtracting the 3 default ones (stdin, stdout, stderr), we needed to open 1021 files.
+
+When actually running the program, one may notice no output is produced as everything is written to a log file. This can be circumvented by setting the log file to "/dev/tty", which is the terminal. This way, a more clear output can be obtained.
+
+Looking at the decompiled source code, one may see that that the `globals.debugfile` is never closed when it is replaced by another one. This provides the foundation for the exploit. A python program was used to generate a file looking like the following, with "-d /dev/tty" repeated 1021 times:
+
+``` bash
+/home/flag18/flag18 -d /dev/tty -d /dev/tty ... -d /dev/tty
+```
+
+Running the this bash script, we can then use "login pw" to login and "shell" to obtain our shell. Fortunately, the first stage passes, we can login. However, when starting the shell process, the error "/home/flag18/flag18: error while loading shared libraries: libncurses.so.5: cannot open shared object file: Error 24" is obtained. This indicates we need to release a file descriptor. The easiest way is to use "closelog" to close the logger after loggin in. 
+
+However, this reveals a new problem: "/home/flag18/flag18: -d: invalid option". This is caused by the same arguments of /home/flag18/flag18 being passed to /bin/bash. To prevent this, we can add a "--rcfile" option as one of the long options. The new script thus becomes:
+
+``` bash
+/home/flag18/flag18 --rcfile /tmp/t -d /dev/tty -d /dev/tty ... -d /dev/tty
+```
+
+Running the commands described previously now works flawlessly. A bash shell has been opened and typing getflag reveals we have successfully completed this level.
+
+## Level19
+
+The source code for this program is relatively simple. The program checks the id of the parent process, and if it is root, then we obtain a privileged shell. This immediately reminded me [orphaned child process](https://en.wikipedia.org/wiki/Orphan_process), which are created when the parent process dies before the child. In this case, the child is automatically attached to the "init" process, which is root. This sets up the basic premise of the attack. A PoC can be created by the following C code.
+
+```C
+#include <unistd.h>
+#include <stdlib.h>
+
+int main(){
+    if (fork() == 0){
+        sleep(1);
+        execl("/home/flag19/flag19", "/bin/sh", "-c", "getflag>/tmp/o", NULL);
+    }else{
+        return 0;
+    }
+}
+```
+
+After compiling and running the code, the output can be checked at "tmp/o". Unsuprisingly, it contains the message "You have successfully executed getflag on a target account".
+
